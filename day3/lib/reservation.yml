@@ -1,0 +1,54 @@
+---
+# ############################################### #
+# Static provider parameter                       #
+# ############################################### #
+provider: ovh
+
+resources:
+  os-control-compute: 192.168.0.2
+  os-compute: 192.168.0.3
+
+
+
+# ############################################### #
+# Inventory to use                                #
+# ############################################### #
+
+# This will describe the topology of your services
+inventory: inventories/inventory.sample
+
+# ############################################### #
+# docker registry parameters
+# ############################################### #
+registry:
+  type: none
+
+# ############################################### #
+# Enos Customizations                             #
+# ############################################### #
+enable_monitoring: no
+
+# ############################################### #
+# Kolla parameters                                #
+# ############################################### #
+# Repository
+kolla_repo: "https://git.openstack.org/openstack/kolla-ansible"
+kolla_ref: "stable/pike"
+
+# Vars : globals.yml
+kolla:
+  kolla_base_distro: "centos"
+  kolla_install_type: "source"
+  docker_namespace: "beyondtheclouds"
+  enable_openvswitch: "no"
+  neutron_plugin_agent: "linuxbridge"
+
+  enable_heat: "yes"
+  # enable_trove: "yes"
+  # enable_octavia: "yes"
+  # enable_senlin: "yes"
+  # enable_zun: "yes"
+  # enable_designate: "yes"
+
+  node_custom_config: "{{ cwd }}/patch"
+

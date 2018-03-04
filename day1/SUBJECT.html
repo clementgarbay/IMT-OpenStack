@@ -1,0 +1,1076 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2018-02-05 Mon 10:21 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Operate Resources in Public and Private Clouds Thanks to OpenStack</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="Ronan-Alexandre Cherrueau, Dimitri Pertin, Didier Iscovery" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="../timeline.css"/>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2018 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Operate Resources in Public and Private Clouds Thanks to OpenStack
+<br />
+<span class="subtitle">The case of OMH &#x2013; Online Mines Hosting</span>
+</h1>
+<div class="abstract">
+<p>
+OpenStack has become the de-facto solution to operate compute, network
+and storage resources in public and private clouds. In this lab, we
+are going to:
+</p>
+<ul class="org-ul">
+<li>Deploy and configure OpenStack using
+EnOS<sup><a id="fnr.1" class="footref" href="#fn.1">1</a></sup><sup>, </sup><sup><a id="fnr.2" class="footref" href="#fn.2">2</a></sup> (Day 1).</li>
+<li>Operate this OpenStack to manage IaaS resources (e.g. boot VMs) (Day
+1/Day 2).</li>
+<li>Start your OMH &#x2013; Online Mines Hosting &#x2013; company that deploys
+Wordpress as a Service (Day 2).</li>
+<li>Automatize all the stuff with the Heat template engine (i.e., manage
+your cloud from the sofa! &#x2013; Day 2).</li>
+</ul>
+
+<p>
+Find the slides of the lecture <a href="http://enos.irisa.fr/tp-polytech/openstack-slides.pdf">there</a>.
+</p>
+
+</div>
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org05686ab">1. Requirements and Setup</a>
+<ul>
+<li><a href="#org0aac51e">1.1. Environment</a></li>
+<li><a href="#orgdfcabd2">1.2. Setup the lab vm</a>
+<ul>
+<li><a href="#org4059944">1.2.1. Get the base box</a></li>
+<li><a href="#org3686123">1.2.2. Prepare the lab VM</a></li>
+<li><a href="#orgba259a2">1.2.3. Start the lab VM</a></li>
+</ul>
+</li>
+<li><a href="#org2cdbd30">1.3. Validate the setup</a></li>
+</ul>
+</li>
+<li><a href="#org9a9d47c">2. Deploy OpenStack with EnOS</a>
+<ul>
+<li><a href="#orgda8c715">2.1. The EnOS configuration file</a></li>
+<li><a href="#orgd725791">2.2. Deploy OpenStack</a></li>
+<li><a href="#orgdd2b163">2.3. Finish the initialization of OpenStack</a>
+<ul>
+<li><a href="#org3f41c3a">2.3.1. Images</a></li>
+<li><a href="#org995b096">2.3.2. Flavors</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#sec:play-with-os">3. Play with OpenStack</a>
+<ul>
+<li><a href="#orgb41ab2e">3.1. Unleash the Operator in You</a></li>
+<li><a href="#org0ba863a">3.2. In Encryption We Trust</a></li>
+<li><a href="#org4c23c65">3.3. The Art of Provisioning a VM</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org05686ab" class="outline-2">
+<h2 id="org05686ab"><span class="section-number-2">1</span> Requirements and Setup</h2>
+<div class="outline-text-2" id="text-1">
+</div>
+<div id="outline-container-org0aac51e" class="outline-3">
+<h3 id="org0aac51e"><span class="section-number-3">1.1</span> Environment</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+To follow the lab you&rsquo;ll need :
+</p>
+<ul class="org-ul">
+<li>VirtualBox 5.2 or upper <sup><a id="fnr.3" class="footref" href="#fn.3">3</a></sup></li>
+<li>Vagrant 2.0.1 or upper<sup><a id="fnr.4" class="footref" href="#fn.4">4</a></sup></li>
+</ul>
+
+<p>
+The lab makes use of a pre-installed virtual machine (called
+openstack) where EnOS<sup><a id="fnr.1.100" class="footref" href="#fn.1">1</a></sup><sup>, </sup><sup><a id="fnr.2.100" class="footref" href="#fn.2">2</a></sup> is installed. EnOS
+is a holistic framework leveraging containers to conduct easy and
+reproducible evaluations of different OpenStack configurations. In
+particular, EnOS helps you in deploying a real OpenStack infrastructure,
+stressing it and getting feedbacks. In the following, we gonna use EnOS
+to easily deploy OpenStack inside the virtual machine.
+</p>
+
+<p>
+The following depicts the status of the different components in play
+during the lab.
+</p>
+
+<pre class="example">
++---------------------------------------+
+|        host machine (your laptop)     |
+|                                       |
+|                                       |
+|   +---------------------------+       |
+|   |openstack machine (vagrant)|       |
+|   |     ~/rsc &lt;- - - - - -  - - - - - - - - - -  EnOS sources &amp; configuration files
+|   |                           |       |
+|   |  * docker container 1 +   |       |
+|   |  * docker container 2 +   |       |
+|   |  * ...                +- - - - - - - - - - - Docker container launched by
+|   |  * docker container n +   |       |          EnOS (Openstack services/third-party
+|   |                           |       |          services)
+|   +---------------------------+       |
++---------------------------------------+
+</pre>
+
+<div class="NOTE">
+<p>
+In a normal use EnOS would be installed on your local machine directly.
+EnOS would also probably deploy OpenStack on a dedicated infrastructure
+(instead of a single VM).
+</p>
+
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgdfcabd2" class="outline-3">
+<h3 id="orgdfcabd2"><span class="section-number-3">1.2</span> Setup the lab vm</h3>
+<div class="outline-text-3" id="text-1-2">
+</div>
+<div id="outline-container-org4059944" class="outline-4">
+<h4 id="org4059944"><span class="section-number-4">1.2.1</span> Get the base box</h4>
+<div class="outline-text-4" id="text-1-2-1">
+<p>
+Download the lab archive in your working directory.
+</p>
+<pre class="example">
+host:~$ curl -O http://enos.irisa.fr/tp-imt/omh-co.tar.gz
+host:~$ tar xf omh-co.tar.gz
+host:~$ cd omh-co
+
+</pre>
+
+<p>
+The archive contains:
+</p>
+<dl class="org-dl">
+<dt>enos           </dt><dd>The EnOS tool to ease the deployment of OpenStack.</dd>
+<dt>omh.box        </dt><dd>The Vagrant box with all resources needed by EnOS
+to run OpenStack. The result is a relatively huge (~3GB) box,
+but it contains everything you need to run EnOS almost offline.</dd>
+<dt>Vagrantfile</dt><dd>The configuration file for the OpenStack lab machine.</dd>
+<dt>lib</dt><dd>A directory with some bash scripts useful for the lab.</dd>
+</dl>
+</div>
+</div>
+
+<div id="outline-container-org3686123" class="outline-4">
+<h4 id="org3686123"><span class="section-number-4">1.2.2</span> Prepare the lab VM</h4>
+<div class="outline-text-4" id="text-1-2-2">
+<p>
+Check the <code>Vagrantfile</code> looks like the following (substitute &lt;editor&gt;
+with your favorite editor):
+</p>
+<pre class="example">
+host:~/omh-co$ &lt;editor&gt; Vagrantfile
+
+</pre>
+
+<div class="org-src-container">
+<pre class="src src-ruby"><span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">omh-co/Vagrantfile content</span>
+<span style="color: #7CB8BB;">Vagrant</span>.configure<span style="color: #DCDCCC;">(</span><span style="color: #CC9393;">"2"</span><span style="color: #DCDCCC;">)</span> <span style="color: #F0DFAF; font-weight: bold;">do</span> |config|
+  <span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">Location of the VM image</span>
+  config.vm.box = <span style="color: #CC9393;">"file://./omh.box"</span>
+
+  <span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">Network configuration</span>
+  config.vm.hostname = <span style="color: #CC9393;">"openstack"</span>
+  <span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">the lab vm is started with 2 extra network interfaces with</span>
+  <span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">the specified ip addresses</span>
+  config.vm.network <span style="color: #BFEBBF;">:private_network</span>, <span style="color: #BFEBBF;">ip:</span> <span style="color: #CC9393;">"192.168.142.127"</span>
+  config.vm.network <span style="color: #BFEBBF;">:private_network</span>, <span style="color: #BFEBBF;">ip:</span> <span style="color: #CC9393;">"192.168.143.127"</span>
+
+  <span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">Synchronised `host:~/omh-co` with `openstack:~/rsc`</span>
+  config.vm.synced_folder <span style="color: #CC9393;">"./"</span>, <span style="color: #CC9393;">"/home/vagrant/rsc"</span>,
+     <span style="color: #BFEBBF;">owner:</span> <span style="color: #CC9393;">"vagrant"</span>,
+     <span style="color: #BFEBBF;">group:</span> <span style="color: #CC9393;">"vagrant"</span>
+
+  <span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">Resource configuration</span>
+  config.vm.provider <span style="color: #CC9393;">"virtualbox"</span> <span style="color: #F0DFAF; font-weight: bold;">do</span> |vb|
+    vb.cpus = <span style="color: #BFEBBF;">4</span>
+    vb.memory = <span style="color: #BFEBBF;">6144</span>
+    vb.customize <span style="color: #DCDCCC;">[</span><span style="color: #CC9393;">"modifyvm"</span>, <span style="color: #BFEBBF;">:id</span>, <span style="color: #CC9393;">"--nicpromisc3"</span>, <span style="color: #CC9393;">"allow-all"</span><span style="color: #DCDCCC;">]</span>
+  <span style="color: #F0DFAF; font-weight: bold;">end</span>
+<span style="color: #F0DFAF; font-weight: bold;">end</span>
+</pre>
+</div>
+
+<div class="NOTE">
+<p>
+To get more information about that <code>Vagranfile</code> and its syntax, you
+can refer to the official documentation<sup><a id="fnr.5" class="footref" href="#fn.5">5</a></sup>.
+</p>
+
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgba259a2" class="outline-4">
+<h4 id="orgba259a2"><span class="section-number-4">1.2.3</span> Start the lab VM</h4>
+<div class="outline-text-4" id="text-1-2-3">
+<p>
+Start the lab VM :
+</p>
+<pre class="example">
+host:~/omh-co$ vagrant up --provision
+
+</pre>
+
+<p>
+SSH into the lab VM :
+</p>
+<pre class="example">
+host:~/omh-co$ vagrant ssh
+
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org2cdbd30" class="outline-3">
+<h3 id="org2cdbd30"><span class="section-number-3">1.3</span> Validate the setup</h3>
+<div class="outline-text-3" id="text-1-3">
+<p>
+The EnOS tool is already installed in <code>~/rsc/enos</code>. To be sure that
+everything is setup correctly, display the help message.
+</p>
+<pre class="example">
+vagrant@openstack:~$ enos --help
+EnOS: Monitor and test your OpenStack.
+
+usage: enos &lt;command&gt; [&lt;args&gt; ...] [-e ENV|--env=ENV]
+            [-h|--help] [-v|--version] [-s|--silent|--vv]
+
+...
+
+Commands:
+  up             Get resources and install the docker registry.
+  os             Run kolla and install OpenStack.
+  init           Initialise OpenStack with the bare necessities.
+  bench          Run rally on this OpenStack.
+  backup         Backup the environment
+  ssh-tunnel     Print configuration for port forwarding with horizon.
+  tc             Enforce network constraints
+  info           Show information of the actual deployment.
+  destroy        Destroy the deployment and optionally the related resources.
+  deploy         Shortcut for enos up, then enos os and enos config.
+
+See 'enos &lt;command&gt; --help' for more information on a specific
+command.
+</pre>
+
+<p>
+You can also check that all the docker images we gonna use in this lab
+are present.
+</p>
+<pre class="example">
+vagrant@openstack:~$ sudo docker images
+CONTAINER ID        IMAGE                                                           PORTS               NAMES
+a1c57ff4b25d        beyondtheclouds/centos-source-horizon:5.0.1                                         horizon
+e3303dad621b        beyondtheclouds/centos-source-neutron-metadata-agent:5.0.1                          neutron_metadata_agent
+15ec2a6702c0        beyondtheclouds/centos-source-neutron-l3-agent:5.0.1                                neutron_l3_agent
+f6b7e6ff171a        beyondtheclouds/centos-source-neutron-dhcp-agent:5.0.1                              neutron_dhcp_agent
+08a3cf6af038        beyondtheclouds/centos-source-neutron-openvswitch-agent:5.0.1                       neutron_openvswitch_agent
+1308668a3cd8        beyondtheclouds/centos-source-neutron-server:5.0.1                                  neutron_server
+f56c6f9d6b11        beyondtheclouds/centos-source-openvswitch-vswitchd:5.0.1                            openvswitch_vswitchd
+849fa9831bb7        beyondtheclouds/centos-source-openvswitch-db-server:5.0.1                           openvswitch_db
+0e237ebdc082        beyondtheclouds/centos-source-nova-compute:5.0.1                                    nova_compute
+fa89210d7048        beyondtheclouds/centos-source-nova-novncproxy:5.0.1                                 nova_novncproxy
+40fb744efdc6        beyondtheclouds/centos-source-nova-consoleauth:5.0.1                                nova_consoleauth
+d6d72e0b13ee        beyondtheclouds/centos-source-nova-conductor:5.0.1                                  nova_conductor
+ce63bc0ead78        beyondtheclouds/centos-source-nova-scheduler:5.0.1                                  nova_scheduler
+569c4ecbdba9        beyondtheclouds/centos-source-nova-api:5.0.1                                        nova_api
+c372962e57e4        beyondtheclouds/centos-source-nova-placement-api:5.0.1                              placement_api
+8965058db41f        beyondtheclouds/centos-source-nova-libvirt:5.0.1                                    nova_libvirt
+317be498959c        beyondtheclouds/centos-source-nova-ssh:5.0.1                                        nova_ssh
+de2504b8bff6        beyondtheclouds/centos-source-glance-registry:5.0.1                                 glance_registry
+b9dc92d42818        beyondtheclouds/centos-source-glance-api:5.0.1                                      glance_api
+ed519ff54ed7        beyondtheclouds/centos-source-keystone:5.0.1                                        keystone
+cee8cb849b40        beyondtheclouds/centos-source-rabbitmq:5.0.1                                        rabbitmq
+21aa98c5c207        beyondtheclouds/centos-source-mariadb:5.0.1                                         mariadb
+5d89dcb7a09b        beyondtheclouds/centos-source-memcached:5.0.1                                       memcached
+ba8ae03137cc        beyondtheclouds/centos-source-keepalived:5.0.1                                      keepalived
+048cf826c02d        beyondtheclouds/centos-source-haproxy:5.0.1                                         haproxy
+e5b1de64de58        beyondtheclouds/centos-source-cron:5.0.1                                            cron
+9636fc8ed550        beyondtheclouds/centos-source-kolla-toolbox:5.0.1                                   kolla_toolbox
+273206908a13        beyondtheclouds/centos-source-fluentd:5.0.1                                         fluentd
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org9a9d47c" class="outline-2">
+<h2 id="org9a9d47c"><span class="section-number-2">2</span> Deploy OpenStack with EnOS</h2>
+<div class="outline-text-2" id="text-2">
+</div>
+<div id="outline-container-orgda8c715" class="outline-3">
+<h3 id="orgda8c715"><span class="section-number-3">2.1</span> The EnOS configuration file</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+In this lab, we use EnOS to ease the deployment of OpenStack. There
+are several other options such as DevStack<sup><a id="fnr.6" class="footref" href="#fn.6">6</a></sup>,
+Puppet-OpenStack<sup><a id="fnr.7" class="footref" href="#fn.7">7</a></sup> or Kolla-ansible<sup><a id="fnr.8" class="footref" href="#fn.8">8</a></sup> and all
+matters. But, EnOS presents a great advantage when you want to do
+performance analysis of your OpenStack.
+</p>
+
+<p>
+To deploy OpenStack, EnOS reads a <i>configuration</i> file. This file
+states the OpenStack resources you want to measure together with their
+topology. A configuration could say, &ldquo;Deploy a basic OpenStack on a
+single node&rdquo;, or &ldquo;Put OpenStack control services on ClusterA and
+compute services on ClusterB&rdquo;, but also &ldquo;Deploy each OpenStack
+services on a dedicated node and add WAN network latencies between
+them&rdquo;. So that EnOS can deploy such OpenStack over your testbed and
+run performance analysis.
+</p>
+
+<p>
+The description of the configuration is done in a <code>reservation.yaml</code>
+file, under the <code>resources</code> key. The way you describe your configuration
+may vary a little bit depending on the testbed you target. The actual
+EnOS implementation supports Vagrant (VBox), Grid’5000 and Chameleon
+testbed. Please, refer to the EnOS provider
+documentation<sup><a id="fnr.9" class="footref" href="#fn.9">9</a></sup> to find examples of resources
+descriptions depending on the testbed.
+</p>
+
+<p>
+For the sake of this lab (since everybody does not have a
+Grid’5000/Chameleon account, nor plenty of available resources on his
+personal machine for VBox, and the Internet connection may be slow) we
+provide a configuration that says to deploy all OpenStack services on
+the lab machine using a special provider we call static. You can read
+that configuration in the lab vm with:
+</p>
+<pre class="example">
+vagrant@openstack:~$ less ~/rsc/reservation.yaml
+
+</pre>
+</div>
+</div>
+
+<div id="outline-container-orgd725791" class="outline-3">
+<h3 id="orgd725791"><span class="section-number-3">2.2</span> Deploy OpenStack</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+EnOS manages all the aspects of an OpenStack deployment by calling
+<code>enos deploy</code>. Concretely, the <code>deploy</code> phase first gets resources on
+your testbed following your configuration description. Then, it
+provisions these resources with Ansible. And finally, it starts each
+OpenStack services (e.g. Keystone, Nova, Neutron, &#x2026;) inside a
+dedicated Docker container.
+</p>
+
+<p>
+Launch the deployment with:
+</p>
+<pre class="example">
+vagrant@openstack:~$ enos deploy -f ~/rsc/reservation.yml
+
+</pre>
+
+<p>
+Then, observe EnOS deploying containers from another terminal of your
+VM with:
+</p>
+<pre class="example">
+vagrant@openstack:~$ sudo watch docker ps
+
+</pre>
+</div>
+</div>
+
+<div id="outline-container-orgdd2b163" class="outline-3">
+<h3 id="orgdd2b163"><span class="section-number-3">2.3</span> Finish the initialization of OpenStack</h3>
+<div class="outline-text-3" id="text-2-3">
+<p>
+Wait the intervention of the instructor to finish the initialization
+of the lab (<i>i.e.</i>, install images and flavors).
+</p>
+</div>
+
+<div id="outline-container-org3f41c3a" class="outline-4">
+<h4 id="org3f41c3a"><span class="section-number-4">2.3.1</span> Images</h4>
+<div class="outline-text-4" id="text-2-3-1">
+<pre class="example">
+openstack image create --disk-format  qcow2 --public --file ~/cirros.qcow2 cirros
+openstack image create --disk-format  qcow2 --public --file ~/debian-9.qcow2 debian-9
+
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org995b096" class="outline-4">
+<h4 id="org995b096"><span class="section-number-4">2.3.2</span> Flavors</h4>
+<div class="outline-text-4" id="text-2-3-2">
+<pre class="example">
+openstack flavor create --ram 512 --disk 1 --vcpus 1 --public m1.tiny
+openstack flavor create --ram 512 --disk 5 --vcpus 1 --public m1.small
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org0abebb9" class="outline-2">
+<h2 id="sec:play-with-os"><a id="org0abebb9"></a><span class="section-number-2">3</span> Play with OpenStack</h2>
+<div class="outline-text-2" id="text-sec:play-with-os">
+<p>
+The last service deployed is the OpenStack dashboard (Horizon). Once
+the deployment process is finished, Horizon is reachable from the web
+browser of your host machine <a href="http://192.168.142.127">http://192.168.142.127</a> with the following
+credentials:
+</p>
+<ul class="org-ul">
+<li>login: <code>admin</code></li>
+<li>password: <code>demo</code></li>
+</ul>
+
+<p>
+From here, you can reach <code>Project &gt; Compute &gt; Instances &gt; Launch
+Instance</code> and boot a virtual machine given the following information:
+</p>
+<ul class="org-ul">
+<li>a name (e.g., <code>horizon-vm</code>)</li>
+<li>an image (e.g., <code>cirros</code>)</li>
+<li>a flavor to limit the resources of your instance (I recommend
+<code>tiny</code>)</li>
+<li>and a network setting (must be <code>private</code>)</li>
+</ul>
+
+<p>
+You should select options by clicking on the arrow on the right of
+each possibility. When the configuration is OK, the <code>Launch Instance</code>
+button should be enabled. After clicking on it, you should see the
+instance in the <code>Active</code> state in less than a minute.
+</p>
+
+<p>
+Now, you have several options to connect to your freshly deployed VM.
+For instance, by clicking on its name, Horizon provides a virtual
+console under the tab <code>Console</code>. Use the following credentials to
+access the VM:
+</p>
+<ul class="org-ul">
+<li>login: <code>cirros</code></li>
+<li>password: <code>cubswin:)</code></li>
+</ul>
+
+<p>
+While Horizon is helpful to discover OpenStack features, this is not
+how a true operator administrates OpenStack. A true operator prefers
+command line interface 😄.
+</p>
+</div>
+
+<div id="outline-container-orgb41ab2e" class="outline-3">
+<h3 id="orgb41ab2e"><span class="section-number-3">3.1</span> Unleash the Operator in You</h3>
+<div class="outline-text-3" id="text-3-1">
+<p>
+OpenStack provides a command line interface to operate your Cloud. But
+before using it, you need to set your environment with the OpenStack
+credentials, so that the command line won&rsquo;t bother you by requiring
+credentials each time.
+</p>
+
+<p>
+Load the OpenStack credentials:
+</p>
+<pre class="example">
+vagrant@openstack:~$ source ~/current/admin-openrc
+
+</pre>
+
+<p>
+You can then check that your environment is correctly set by:
+</p>
+<pre class="example">
+vagrant@openstack:~$ env|grep OS_
+OS_PROJECT_DOMAIN_ID=default
+OS_REGION_NAME=RegionOne
+OS_USER_DOMAIN_NAME=default
+OS_USER_DOMAIN_ID=default
+OS_PROJECT_NAME=admin
+OS_IDENTITY_API_VERSION=3
+OS_PASSWORD=demo
+OS_AUTH_URL=http://192.168.142.103:35357/v3
+OS_USERNAME=admin
+OS_TENANT_NAME=admin
+OS_PROJECT_DOMAIN_NAME=default
+</pre>
+
+<p>
+All operations to manage OpenStack are done through one single command
+line, called <code>openstack</code>. Doing an <code>openstack --help</code> displays the
+really long list of possibilities provided by this command. The following
+gives you a selection of the most often used commands to operate your Cloud:
+</p>
+<dl class="org-dl">
+<dt>List OpenStack running services</dt><dd><code>openstack endpoint list</code></dd>
+<dt>List images</dt><dd><code>openstack image list</code></dd>
+<dt>List flavors</dt><dd><code>openstack flavor list</code></dd>
+<dt>List networks</dt><dd><code>openstack network list</code></dd>
+<dt>List computes</dt><dd><code>openstack hypervisor list</code></dd>
+<dt>List VMs (running or not)</dt><dd><code>openstack server list</code></dd>
+<dt>Get details on a specific VM</dt><dd><code>openstack server show &lt;vm-name&gt;</code></dd>
+<dt>Start a new VM</dt><dd><code>openstack server create --image &lt;image-name&gt; --flavor &lt;flavor-name&gt; --nic net-id=&lt;net-id&gt; &lt;vm-name&gt;</code></dd>
+<dt>View VMs logs</dt><dd><code>openstack console log show &lt;vm-name&gt;</code></dd>
+</dl>
+
+<p>
+Using all these commands, you can use the CLI to start a new tiny
+cirros VM called <code>cli-vm</code>:
+</p>
+<pre class="example">
+vagrant@openstack:~$ openstack server create\
+  --image cirros\
+  --flavor m1.tiny\
+  --network private\
+  cli-vm
+</pre>
+
+<p>
+Then, display the information about your VM with the following command:
+</p>
+<pre class="example">
+vagrant@openstack:~$ openstack server show cli-vm
+
+</pre>
+
+<p>
+Note in particular the status of your VM. This status will go from
+<code>BUILD</code>: OpenStack is looking for the best place to boot the VM, to
+<code>ACTIVE</code>: your VM is running. The status could also be <code>ERROR</code> if you
+are experiencing hard times with your infrastructure.
+</p>
+
+<p>
+With the previous <code>openstack server create</code> command, the VM boots with
+a private IP. When the state is <code>ACTIVE</code>, wait one minute or two, the
+time for the VM to boot. You can ask for the status of your VM and its
+IPs with:
+</p>
+<pre class="example">
+vagrant@openstack:~$ openstack server show cli-vm -c status -c addresses
+
+</pre>
+<p>
+Once you got its private IP, you can ping and SSH on it:
+</p>
+<pre class="example">
+vagrant@openstack:~$ ping &lt;private-ip&gt;
+vagrant@openstack:~$ ssh -l cirros &lt;private-ip&gt;
+
+</pre>
+
+
+<p>
+Private IPs are used for communication between VMs, meaning you cannot
+ping your VM from an external network (<i>e.g.</i>, the host machine). You
+have to manually affect a floating IP to your machine if you want it
+to be pingable from the host.
+</p>
+<pre class="example">
+vagrant@openstack:~$ openstack server add floating ip\
+  cli-vm\
+  $(openstack floating ip create public -c floating_ip_address -f value)
+</pre>
+
+<p>
+Then, ask for the status of your VM and its IPs with:
+</p>
+<pre class="example">
+vagrant@openstack:~$ openstack server show cli-vm -c status -c addresses
+
+</pre>
+
+<p>
+When the state is <code>ACTIVE</code>, wait one minute or two, the time for the VM
+to boot. Then you can ping it on its floating IP and SSH on it:
+</p>
+<pre class="example">
+vagrant@openstack:~$ ping &lt;floating-ip&gt; # floating-ip is 192.168.143.*
+vagrant@openstack:~$ ssh -l cirros &lt;floating-ip&gt;
+
+</pre>
+
+<div class="NOTE">
+<p>
+You can check that the VM finished to boot by looking at its logs with
+<code>openstack console log show cli-vm</code>. The VM finished to boot when last
+lines are:
+</p>
+<pre class="example">
+=== cirros: current=0.3.4 uptime=16.56 ===
+  ____               ____  ____
+ / __/ __ ____ ____ / __ \/ __/
+/ /__ / // __// __// /_/ /\ \
+\___//_//_/  /_/   \____/___/
+   http://cirros-cloud.net
+
+
+login as 'cirros' user. default password: 'cubswin:)'. use 'sudo' for root.
+cli-vm login:
+</pre>
+
+</div>
+
+<p>
+Before going to the next section, feel free to play around with the
+<code>openstack</code> cli and Horizon. For instance, list all features offered
+by Nova with <code>openstack server --help</code> and try to figure out how to
+SSH on <code>cli-vm</code> using its name rather than its floating IP.
+</p>
+
+
+<p>
+Before going to the next section, play around with the <code>openstack</code> CLI
+and Horizon. For instance, list all the features offered by Nova with
+<code>openstack server --help</code>. Here are some exercises for you, find the
+CLI commands for the following actions:
+</p>
+<ol class="org-ol">
+<li>SSH on <code>cli-vm</code> using its name rather than its private IP;</li>
+<li>Attach <code>cli-vm</code> to the public network rather than attaching it a
+floating ip (check afterwards on the machine the network
+interfaces);</li>
+<li>What is the advantage of floating IP</li>
+<li>Create a snapshot of <code>cli-vm</code>;</li>
+<li>Delete <code>cli-vm</code>;</li>
+<li>Boot a new machine <code>cli-vm-clone</code> from the snapshot.</li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-org0ba863a" class="outline-3">
+<h3 id="org0ba863a"><span class="section-number-3">3.2</span> In Encryption We Trust</h3>
+<div class="outline-text-3" id="text-3-2">
+<p>
+Any cirros VMs share the same credentials (<i>i.e.</i>, <code>cirros</code>,
+<code>cubswin</code>) which is a security problem. As an IaaS DevOps, you want
+that only some clients can SSH on some VMs. Fortunately, OpenStack
+helps with the management of SSH keys. OpenStack can generate a SSH
+key and push the public counterpart on the VM. Therefore, doing a
+<code>ssh</code> on the VM will use the SSH key instead of asking the client to
+fill the credentials.
+</p>
+
+<p>
+Make an SSH key and store the private counterpart in <code>~/admin.pem</code>.
+Then, give that file the correct permission access.
+</p>
+<pre class="example">
+vagrant@openstack:~$ openstack keypair create --private-key ~/admin.pem admin
+vagrant@openstack:~$ chmod 600 admin.pem
+
+</pre>
+
+<p>
+Then, start a new VM and ask OpenStack to copy the public counterpart
+of your SSH key in the <code>~/.ssh/authorized_keys</code> of the VM (<i>i.e.</i>,
+note the <code>--key-name admin</code>).
+</p>
+<div class="org-src-container">
+<pre class="src src-bash">vagrant@openstack:~$ openstack server create --wait --image cirros<span style="color: #CC9393;">\</span>
+                               --flavor m1.tiny --network private<span style="color: #CC9393;">\</span>
+                               --key-name admin cli-vm-adminkey
+</pre>
+</div>
+
+<p>
+Now you can access your VM using SSH without filling credentials.
+</p>
+<div class="org-src-container">
+<pre class="src src-bash">vagrant@openstack:~$ openstack server ssh cli-vm-adminkey <span style="color: #CC9393;">\</span>
+                                --private<span style="color: #CC9393;">\</span>
+                                --login cirros<span style="color: #CC9393;">\</span>
+                                --identity ~/admin.pem
+</pre>
+</div>
+
+<p>
+Or directly with the <code>ssh</code> command
+</p>
+<pre class="example">
+vagrant@openstack:~$ ssh -i ~/admin.pem cirros@$(openstack server show cli-vm-adminkey -c addresses -f value | sed  -Er 's/private=(10\.0\.0\.[0-9]+).*/\1/g')
+
+</pre>
+
+<div class="NOTE">
+<p>
+A regular <code>ssh</code> command looks like <code>ssh -i &lt;identity-file&gt; &lt;name&gt;@&lt;server-ip&gt;</code>. The following OpenStack command followed by the <code>sed</code> returns the private IP of <code>cli-vm-adminkey</code>.
+</p>
+<pre class="example">
+vagrant@openstack:~$ openstack server show cli-vm-adminkey -c addresses -f value | sed  -Er 's/private=(10\.0\.0\.[0-9]+).*/\1/g'
+
+</pre>
+
+</div>
+</div>
+</div>
+
+<div id="outline-container-org4c23c65" class="outline-3">
+<h3 id="org4c23c65"><span class="section-number-3">3.3</span> The Art of Provisioning a VM</h3>
+<div class="outline-text-3" id="text-3-3">
+<p>
+Provisioning is the process that automatically installs software,
+alters configurations, and more on the machine as part of the boot
+process. On OpenStack, provisioning is achieved thanks to
+Cloudinit<sup><a id="fnr.10" class="footref" href="#fn.10">10</a></sup>. It is a program that runs at the boot time to
+customize the VM.
+</p>
+
+<p>
+You have already used Cloudinit without even knowing it! The previous
+command <code>openstack server create</code> with the <code>--identity</code> parameter
+tells OpenStack to make the public counterpart of the SSH key
+available to the VM. When the VM boots for the first time, Cloudinit
+is (among other tasks) in charge of fetching this public SSH key from
+OpenStack, and copy it to <code>~/.ssh/authorized_keys</code>. Beyond that,
+Cloudinit is in charge of many aspects of the VM customization like
+mounting volume, resizing file systems or setting an hostname (the
+list of Cloudinit modules can be found here:<sup><a id="fnr.11" class="footref" href="#fn.11">11</a></sup>).
+Furthermore, Cloudinit is able to run a bash script that will be
+executed on the VM as <code>root</code> during the boot process.
+</p>
+
+<p>
+To tell OpenStack to make this script reachable from our VM, we use a
+mechanism called <code>user-data</code>. For instance, the following starts a Debian and
+installs <code>figlet</code> and <code>lolcat</code> software on the VM:
+</p>
+<div class="org-src-container">
+<pre class="src src-bash">vagrant@openstack:~$ <span style="color: #DFAF8F;">PROVISION_FILE</span>=<span style="color: #CC9393;">'/tmp/provision.sh'</span>
+vagrant@openstack:~$ cat &gt; <span style="color: #CC9393;">"$PROVISION_FILE"</span> &lt;&lt; EOF
+<span style="color: #F0DFAF; font-weight: bold;">#!/bin/bash</span>
+<span style="color: #F0DFAF; font-weight: bold;">apt-get update</span>
+<span style="color: #F0DFAF; font-weight: bold;">apt-get install -y figlet lolcat</span>
+<span style="color: #F0DFAF; font-weight: bold;">EOF</span>
+vagrant@openstack:~$ openstack server create --wait --image debian-9<span style="color: #CC9393;">\</span>
+  --flavor m1.small --network private<span style="color: #CC9393;">\</span>
+  --key-name admin<span style="color: #CC9393;">\</span>
+  --user-data $<span style="color: #DFAF8F;">PROVISION_FILE</span><span style="color: #CC9393;">\</span>
+  cli-vm-provision
+</pre>
+</div>
+
+<p>
+You can follow the correct installation of software with:
+</p>
+<pre class="example">
+watch openstack console log show --lines=5 cli-vm-provision
+
+</pre>
+
+<p>
+Then, you can jump on the VM and call the <code>figlet</code> and <code>lolcat</code>
+software.
+</p>
+<div class="org-src-container">
+<pre class="src src-bash">vagrant@openstack:~$ openstack server ssh cli-vm-provision <span style="color: #CC9393;">\</span>
+  --private<span style="color: #CC9393;">\</span>
+  --login debian<span style="color: #CC9393;">\</span>
+  --identity ~/admin.pem
+debian@cli-vm-provision:~$ figlet <span style="color: #CC9393;">"The Art of Provisionning a VM"</span> | lolcat
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="footnotes">
+<h2 class="footnotes">Footnotes: </h2>
+<div id="text-footnotes">
+
+<div class="footdef"><sup><a id="fn.1" class="footnum" href="#fnr.1">1</a></sup> <div class="footpara"><p class="footpara">
+<a href="https://hal.inria.fr/hal-01415522v2">https://hal.inria.fr/hal-01415522v2</a>
+</p></div></div>
+
+<div class="footdef"><sup><a id="fn.2" class="footnum" href="#fnr.2">2</a></sup> <div class="footpara"><p class="footpara">
+<a href="https://github.com/BeyondTheClouds/enos">https://github.com/BeyondTheClouds/enos</a>
+</p></div></div>
+
+<div class="footdef"><sup><a id="fn.3" class="footnum" href="#fnr.3">3</a></sup> <div class="footpara"><p class="footpara">
+<a href="https://www.virtualbox.org/wiki/Downloads">https://www.virtualbox.org/wiki/Downloads</a>
+</p></div></div>
+
+<div class="footdef"><sup><a id="fn.4" class="footnum" href="#fnr.4">4</a></sup> <div class="footpara"><p class="footpara">
+<a href="https://www.vagrantup.com/downloads.html">https://www.vagrantup.com/downloads.html</a>
+</p></div></div>
+
+<div class="footdef"><sup><a id="fn.5" class="footnum" href="#fnr.5">5</a></sup> <div class="footpara"><p class="footpara">
+<a href="https://www.vagrantup.com/docs/vagrantfile/index.html">https://www.vagrantup.com/docs/vagrantfile/index.html</a>
+</p></div></div>
+
+<div class="footdef"><sup><a id="fn.6" class="footnum" href="#fnr.6">6</a></sup> <div class="footpara"><p class="footpara">
+<a href="https://docs.openstack.org/devstack/latest/">https://docs.openstack.org/devstack/latest/</a>
+</p></div></div>
+
+<div class="footdef"><sup><a id="fn.7" class="footnum" href="#fnr.7">7</a></sup> <div class="footpara"><p class="footpara">
+<a href="https://docs.openstack.org/puppet-openstack-guide/latest/">https://docs.openstack.org/puppet-openstack-guide/latest/</a>
+</p></div></div>
+
+<div class="footdef"><sup><a id="fn.8" class="footnum" href="#fnr.8">8</a></sup> <div class="footpara"><p class="footpara">
+<a href="https://docs.openstack.org/developer/kolla-ansible/">https://docs.openstack.org/developer/kolla-ansible/</a>
+</p></div></div>
+
+<div class="footdef"><sup><a id="fn.9" class="footnum" href="#fnr.9">9</a></sup> <div class="footpara"><p class="footpara">
+<a href="https://enos.readthedocs.io/en/latest/provider.html">https://enos.readthedocs.io/en/latest/provider.html</a>
+</p></div></div>
+
+<div class="footdef"><sup><a id="fn.10" class="footnum" href="#fnr.10">10</a></sup> <div class="footpara"><p class="footpara">
+<a href="https://cloud-init.io/">https://cloud-init.io/</a>
+</p></div></div>
+
+<div class="footdef"><sup><a id="fn.11" class="footnum" href="#fnr.11">11</a></sup> <div class="footpara"><p class="footpara">
+<a href="http://cloudinit.readthedocs.io/en/latest/topics/modules.html">http://cloudinit.readthedocs.io/en/latest/topics/modules.html</a>
+</p></div></div>
+
+
+</div>
+</div></div>
+<div id="postamble" class="status">
+<p class="author">Author: Ronan-Alexandre Cherrueau, Dimitri Pertin, Didier Iscovery</p>
+<p class="email">Email: <a href="mailto:{firstname.lastname}@inria.fr">{firstname.lastname}@inria.fr</a></p>
+<p class="github">Find a typo, wanna make a proposition:
+ <a href="https://github.com/BeyondTheClouds/enos-scenarios/issues/new?title=tp-imt">open an issue</a></p>
+<p class="date">Last modification: 2018-02-05 Mon 10:19</p>
+<p class="license">This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.</p>
+<p class="creator"><a href="https://www.gnu.org/software/emacs/">Emacs</a> 25.3.1 (<a href="https://orgmode.org">Org</a> mode 9.1.6) – theme by
+ <a href="http://gongzhitaao.org/orgcss">http://gongzhitaao.org/orgcss</a></p>
+</div>
+</body>
+</html>

@@ -1,0 +1,939 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2018-02-09 Fri 08:11 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Operate Resources in Public and Private Clouds Thanks to OpenStack</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="Ronan-Alexandre Cherrueau, Dimitri Pertin, Didier Iscovery" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="../timeline.css" />
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2018 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Operate Resources in Public and Private Clouds Thanks to OpenStack
+<br />
+<span class="subtitle">The case of OMH &#x2013; Online Mines Hosting</span>
+</h1>
+<div class="abstract">
+<p>
+OpenStack has become the de-facto solution to operate compute, network
+and storage resources in public and private clouds. In this lab, we
+are going to:
+</p>
+<ul class="org-ul">
+<li>Deploy and configure OpenStack using
+EnOS<sup><a id="fnr.1" class="footref" href="#fn.1">1</a></sup><sup>, </sup><sup><a id="fnr.2" class="footref" href="#fn.2">2</a></sup> (Day 1).</li>
+<li>Operate this OpenStack to manage IaaS resources (e.g. boot VMs) (Day
+1/Day 2).</li>
+<li>Start your OMH &#x2013; Online Mines Hosting &#x2013; company that deploys
+Wordpress as a Service (Day 2).</li>
+<li>Automatize all the stuff with the Heat template engine (i.e., manage
+your cloud from the sofa! &#x2013; Day 2).</li>
+</ul>
+
+<p>
+Find the slides of the lecture <a href="http://enos.irisa.fr/tp-polytech/openstack-slides.pdf">there</a>.
+</p>
+
+</div>
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orgbc6020d">1. Requirements and Setup</a>
+<ul>
+<li><a href="#sec:ovh">1.1. Environment</a>
+<ul>
+<li><a href="#orgc83398f">1.1.1. Set the experimental environment</a></li>
+</ul>
+</li>
+<li><a href="#org73612d4">1.2. Finish the initialization of OpenStack</a>
+<ul>
+<li><a href="#org3f0f674">1.2.1. Access Horizon</a></li>
+<li><a href="#orgb423ef5">1.2.2. Ping VM from the Frontend</a></li>
+<li><a href="#org717d61c">1.2.3. VM ping the Internet</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#org344e055">2. OMH &#x2013; Online Mines Hosting</a>
+<ul>
+<li><a href="#org69fdaf7">2.1. Clean the environment</a></li>
+</ul>
+</li>
+<li><a href="#org652285b">3. Automatize the deployment with Heat</a></li>
+<li><a href="#orgee7df82">4. Appendix</a>
+<ul>
+<li><a href="#org02ba6d0">4.1. Installs MariaDB on Debian 9</a></li>
+<li><a href="#org820c45e">4.2. Installs Wordpress on Debian 9</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgbc6020d" class="outline-2">
+<h2 id="orgbc6020d"><span class="section-number-2">1</span> Requirements and Setup</h2>
+<div class="outline-text-2" id="text-1">
+</div>
+<div id="outline-container-org4bbba13" class="outline-3">
+<h3 id="sec:ovh"><a id="org4bbba13"></a><span class="section-number-3">1.1</span> Environment</h3>
+<div class="outline-text-3" id="text-sec:ovh">
+<p>
+To follow the lab you&rsquo;ll need an OVH account<sup><a id="fnr.3" class="footref" href="#fn.3">3</a></sup>. OVH is a French company
+providing Cloud computing and hosting services. Founded in 1999, its
+headquarters are located in Roubaix. OVH has provided us some vouchers that can
+be used to deploy resources during this session. You will quickly notice that
+OVH public Cloud is based on standard cloud technologies. More particularly, the
+infrastructure management is managed by OpenStack 😄.
+</p>
+
+<p>
+For this lab, we are going to build a Platform as a Service (PaaS) over the OVH
+infrastructure. To that end, we will deploy our own OpenStack on OVH to manage
+the deployment and the management of real applications.
+</p>
+
+<p>
+During the last session, you deployed all the OpenStack services in a single
+virtual machine. Let&rsquo;s start gently by deploying OpenStack over two virtual
+machines. To that end, you will need first to set an experimental environment
+composed of two virtual machine (called os<sub>controller</sub><sub>compute</sub> and os<sub>compute</sub>)
+from the OVH public Cloud interface, interconnected by a private network. Since
+you are now familiar with EnOS<sup><a id="fnr.1.100" class="footref" href="#fn.1">1</a></sup><sup>, </sup><sup><a id="fnr.2.100" class="footref" href="#fn.2">2</a></sup>, we are going to run
+it from the first VM to deploy the OpenStack services on our OVH VMs.
+</p>
+
+<p>
+During the last session, we used EnOS to deploy the three following groups of
+OpenStack services in a single VM:
+</p>
+<ul class="org-ul">
+<li><code>vagrant_machine</code>:
+<ul class="org-ul">
+<li><code>control</code></li>
+<li><code>compute</code></li>
+<li><code>network</code></li>
+</ul></li>
+</ul>
+
+<p>
+Today, we are going to repeat this operation for the first OVH VM, and we will
+deploy only the compute services to the second one, as depicted here:
+</p>
+<ul class="org-ul">
+<li><code>os_control_compute</code>:
+<ul class="org-ul">
+<li><code>control</code></li>
+<li><code>compute</code></li>
+<li><code>network</code></li>
+</ul></li>
+<li><code>os_compute</code>:
+<ul class="org-ul">
+<li><code>compute</code></li>
+</ul></li>
+</ul>
+
+<p>
+The following depicts the status of the different components in play during the
+lab.
+</p>
+
+<pre class="example">
++---------------------------------------+
+|          OVH Public Cloud             |
+|                                       |
+|                                       |
+|   +---------------------------+       |
+|   |  os_control_compute VM    |       |
+|   |     ~/rsc &lt;- - - - - -  - - - - - - - - - -  EnOS sources &amp; configuration files
+|   |                           |       |
+|   |  * docker container 1 +   |       |
+|   |  * docker container 2 +   |       |
+|   |  * ...                +- - - - - - - - - - - Docker containers launched by EnOS
+|   |  * docker container n +   |       |          (Openstack control/compute/network
+|   |                           |       |          services + third-party services)
+|   +---------------------------+       |
+
+|   +---------------------------+       |
+|   |       os_compute VM       |       |
+|   |                           |       |
+|   |  * docker container 1 +   |       |
+|   |  * docker container 2 +   |       |
+|   |  * ...                +- - - - - - - - - - - Docker containers launched by
+|   |  * docker container n +   |       |          EnOS (Openstack compute services
+|   |                           |       |          + third-party services)
+|   +---------------------------+       |
++---------------------------------------+
+</pre>
+</div>
+
+<div id="outline-container-orgc83398f" class="outline-4">
+<h4 id="orgc83398f"><span class="section-number-4">1.1.1</span> Set the experimental environment</h4>
+<div class="outline-text-4" id="text-1-1-1">
+</div>
+<div id="outline-container-org8ba8ef5" class="outline-5">
+<h5 id="org8ba8ef5"><span class="section-number-5">1.1.1.1</span> Create a new project</h5>
+<div class="outline-text-5" id="text-1-1-1-1">
+<p>
+Please be sure you have created an OVH account prior the session. Once
+you are logged in, reach the OVH public Cloud interface <sup><a id="fnr.3.100" class="footref" href="#fn.3">3</a></sup>.
+Click on <code>Order &gt; Cloud project &gt; Create the project</code> (<code>Commander &gt;
+Projet Cloud &gt; Créer le projet</code>) to create a new project, by giving a
+name and the voucher (<code>7ZA6-AFGP</code>) provided by OVH. Mind that this
+project will only be active during our session. You can now access
+your project: <code>Servers &gt; 'ProjectName' &gt; Infrastructure</code>.
+<code>Infrastructure</code> will be the main panel for us during this session.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgdf34bef" class="outline-5">
+<h5 id="orgdf34bef"><span class="section-number-5">1.1.1.2</span> Set the private network</h5>
+<div class="outline-text-5" id="text-1-1-1-2">
+<p>
+OVH provides their VMs with a public address which is reachable from the
+Internet. However, our VMs are going to communicate together so we would like to
+set a private network to that end. To create a virtual network, few steps are
+required <sup><a id="fnr.4" class="footref" href="#fn.4">4</a></sup>:
+</p>
+<ol class="org-ol">
+<li>Create a OVH vRack;</li>
+<li>Attach our new project to the vRack;</li>
+<li>Create a virtual network.</li>
+</ol>
+
+<p>
+The voucher enables you to create an OVH vRack for free during this session. Its
+creation requires an order which can take few minutes to be validated by OVH.
+</p>
+
+<p>
+Once it is created, you can reach the <code>vRack</code> panel and add your new project in
+it <sup><a id="fnr.5" class="footref" href="#fn.5">5</a></sup>. Once it is added, go back to the <code>Infrastructure</code> panel.
+From here, you can notice that private network creation is now available.
+</p>
+
+<div class="NOTE">
+<p>
+As discussed above, the OVH public Cloud is operated with OpenStack. The OVH web
+interface is similar to the Horizon you played with during the previous session.
+Creating a private network from this interface sends to the OVH OpenStack a
+request to create a private network. To convince you that the OVH public Cloud
+is powered by OpenStack, click on the <code>OpenStack Client</code> at the bottom of this
+interface to reach a terminal from which you can use the OpenStack CLI just like
+you did in our first session.
+</p>
+
+</div>
+</div>
+
+<ol class="org-ol">
+<li><a id="orgd6477e4"></a>Create a private network<br />
+<div class="outline-text-6" id="text-1-1-1-2-1">
+<p>
+Create a private network (using either the interface or the CLI) with the
+following characteristics:
+</p>
+<ul class="org-ul">
+<li>name: project-net</li>
+<li><b>No</b> VLAN</li>
+<li><b>No</b> dhcp</li>
+<li>Only on Gravelines</li>
+<li>address: 192.168.0.0</li>
+<li>mask: 255.255.255.0</li>
+</ul>
+
+<div class="NOTE">
+<p>
+You can both validate the network creation from the web interface and
+from the CLI by typing: <code>openstack network list</code> and <code>openstack
+network show &lt;network_name&gt;</code>.
+</p>
+
+</div>
+</div>
+</li>
+</ol>
+</div>
+
+<div id="outline-container-orgf65e5a9" class="outline-5">
+<h5 id="orgf65e5a9"><span class="section-number-5">1.1.1.3</span> Create an SSH key pair</h5>
+<div class="outline-text-5" id="text-1-1-1-3">
+<p>
+Connection to the VMs are able through SSH whose authentication is based on
+keys. It is highly recommended to create a pair of keys that will be used only
+for this session. To that end you can type on your local machine:
+</p>
+
+<pre class="example">
+ssh-keygen -t rsa -f ~/.ssh/id_tp_omh -P ''
+
+</pre>
+
+<p>
+This commands creates two files:
+</p>
+<ul class="org-ul">
+<li><code>~/.ssh.id_tp_omh</code>: the private counterpart of the SSH key pair;</li>
+<li><code>~/.ssh.id_tp_omh.pub</code>: its public counterpart.</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org71d1cb7" class="outline-5">
+<h5 id="org71d1cb7"><span class="section-number-5">1.1.1.4</span> Boot two virtual machines</h5>
+<div class="outline-text-5" id="text-1-1-1-4">
+<p>
+We can ask OVH to create virtual machines from its <code>Infrastructure</code> panel. From
+here click on <code>Actions &gt; Add a server</code> and select the following characteristics:
+</p>
+<ul class="org-ul">
+<li>Location: &rsquo;Gravelines (GRA3)&rsquo;;</li>
+<li>Distribution: &rsquo;Debian-9&rsquo;;</li>
+<li>Flavor: &rsquo;B2-7&rsquo;;</li>
+<li>Public key: give a name and provide the content of <code>./ssh/id_tp_omh.pub</code>;</li>
+<li>Advanced options:
+<ul class="org-ul">
+<li>Read and provide the script below as post-installation script;</li>
+<li>Link the machine to your private network.</li>
+</ul></li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-bash"><span style="color: #5F7F5F;">#</span><span style="color: #7F9F7F;">!/usr/bin/</span><span style="color: #F0DFAF; font-weight: bold;">env</span><span style="color: #7F9F7F;"> bash</span>
+<span style="color: #DCDCCC; font-weight: bold;">set</span> -x
+<span style="color: #DCDCCC; font-weight: bold;">set</span> -e
+
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">Update apt and install requirements/useful packages</span>
+apt-get update
+apt-get install -y <span style="color: #CC9393;">\</span>
+        htop jq lynx tmux vim <span style="color: #CC9393;">\</span>
+        git libffi-dev libssl-dev python-dev build-essential <span style="color: #CC9393;">\</span>
+        python-pip python-setuptools<span style="color: #CC9393;">\</span>
+        bridge-utils tcpdump
+
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">Download EnOS and install it from source</span>
+git clone https://github.com/rcherrueau/enos.git -b tp-imt --depth <span style="color: #BFEBBF;">1</span> /home/debian
+pip install -e file:///home/debian/enos#<span style="color: #DFAF8F;">egg</span>=enos
+
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">Dowload the tarball and extract it to the home directory</span>
+wget -qO- http://enos.irisa.fr/tp-imt/tp2.tar.gz  | tar -xzv -C /home/debian
+
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">Statically give ens4 an IP (192.168.0.2)</span>
+sed -i <span style="color: #CC9393;">'11s/allow-hotplug ens4/auto ens4/'</span> /etc/network/interfaces
+sed -i <span style="color: #CC9393;">'12s/iface ens4 inet dhcp/iface ens4 inet static/'</span> /etc/network/interfaces
+<span style="color: #DCDCCC; font-weight: bold;">echo</span> <span style="color: #CC9393;">'  address 192.168.0.2/24'</span> &gt;&gt; /etc/network/interfaces
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">ifdown --ignore-errors ens4 &amp;&amp; ifup --ignore-errors ens4</span>
+
+<span style="color: #DCDCCC; font-weight: bold;">echo</span> <span style="color: #CC9393;">"[ -r /home/debian/current/admin-openrc ] &amp;&amp; . /home/debian/current/admin-openrc"</span> &gt;&gt; /home/debian/.bashrc
+
+systemctl reboot
+</pre>
+</div>
+
+<p>
+After clicking on <code>Launch now</code>, a new machine should appear in the interface.
+You can validate the VM is active with <code>openstack server list</code>. Also try to ping
+and SSH to this machine:
+</p>
+
+<pre class="example">
+local_host:~/ ssh -i ~/.ssh/id_tp_omh debian@&lt;public_ip_os_control_compute&gt;
+
+</pre>
+
+<p>
+Boot the second machine similarly but provide the following post-installation
+script:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash"><span style="color: #5F7F5F;">#</span><span style="color: #7F9F7F;">!/usr/bin/</span><span style="color: #F0DFAF; font-weight: bold;">env</span><span style="color: #7F9F7F;"> bash</span>
+<span style="color: #DCDCCC; font-weight: bold;">set</span> -x
+<span style="color: #DCDCCC; font-weight: bold;">set</span> -e
+
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">Update apt and install requirements / useful packages</span>
+apt-get update
+apt-get install -y <span style="color: #CC9393;">\</span>
+        htop jq vim lynx <span style="color: #CC9393;">\</span>
+        python-pip python-dev
+
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">Statically give ens4 an IP (192.168.0.3)</span>
+sed -i <span style="color: #CC9393;">'11s/allow-hotplug ens4/auto ens4/'</span> /etc/network/interfaces
+sed -i <span style="color: #CC9393;">'12s/iface ens4 inet dhcp/iface ens4 inet static/'</span> /etc/network/interfaces
+<span style="color: #DCDCCC; font-weight: bold;">echo</span> <span style="color: #CC9393;">'  address 192.168.0.3/24'</span> &gt;&gt; /etc/network/interfaces
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">echo '  gateway 192.168.0.2' &gt;&gt; /etc/network/interfaces</span>
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">ifdown --ignore-errors ens4 &amp;&amp; ifup --ignore-errors ens4</span>
+
+
+systemctl reboot
+</pre>
+</div>
+
+<p>
+We should copy the private counterpart of the SSH key pair on the first VM so
+that it can be used to ease the SSH connection to the second machine. To that
+end we use <code>scp</code> - type from your local machine:
+</p>
+
+<pre class="example">
+local_host:~/ scp -i ~/.ssh/id_tp_omh ~/.ssh/id_tp_omh debian@&lt;public_ip_os_control_compute&gt;:/home/debian/.ssh/id_rsa
+
+</pre>
+
+<p>
+Confirm you can SSH from <code>os_control_compute</code> to <code>os_compute</code>:
+</p>
+
+<pre class="example">
+local_host:~/ ssh -i ~/.ssh/id_tp_omh debian@&lt;public_ip_os_control_compute&gt;
+
+</pre>
+
+<pre class="example">
+os_control_compute:~/ ssh -i ~/.ssh/id_tp_omh debian@&lt;private_ip_os_control_compute&gt;
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org73612d4" class="outline-3">
+<h3 id="org73612d4"><span class="section-number-3">1.2</span> Finish the initialization of OpenStack</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+Wait the intervention of the instructor to finish the initialization
+of the lab (<i>i.e.</i>, access Horizon, ping VMs one their private Net,
+make VMs ping the Internet).
+</p>
+</div>
+
+<div id="outline-container-org3f0f674" class="outline-4">
+<h4 id="org3f0f674"><span class="section-number-4">1.2.1</span> Access Horizon</h4>
+<div class="outline-text-4" id="text-1-2-1">
+<p>
+Horizon is accessible at <a href="http://192.168.0.249">http://192.168.0.249</a>, thus make it
+unreachable from your browser. To access Horizon, many possibilities
+are offered to you:
+</p>
+
+<dl class="org-dl">
+<dt>Lynx</dt><dd><code>lynx</code> is a text-based web browser for use in a terminal.</dd>
+</dl>
+<div class="org-src-container">
+<pre class="src src-bash">debian@os_control_compute$ lynx http://192.168.0.249:80
+</pre>
+</div>
+
+<dl class="org-dl">
+<dt>DNAT           </dt><dd>Destination NAT (DNAT) changes the destination
+address of packets. We can use DNAT and tell the frontend
+(<i>i.e.</i>,, <code>debian@os_control_compute</code>), which is publicly
+reachable at <code>&lt;public_ip_ens3&gt;</code>, to change the destination of
+packet incoming on <code>&lt;public_ip_ens3&gt;</code> port 80 to
+<code>192.168.0.249:80</code>. This makes Horizon accessible through
+<a href="http://">http://</a>&lt;public<sub>ip</sub><sub>ens3</sub>&gt;:80.</dd>
+</dl>
+<div class="org-src-container">
+<pre class="src src-bash">debian@os_control_compute$ sudo iptables -t nat -A PREROUTING<span style="color: #CC9393;">\</span>
+  --dst &lt;public_ip_ens3&gt; -p tcp --dport <span style="color: #BFEBBF;">80</span><span style="color: #CC9393;">\</span>
+  -j DNAT --to-destination <span style="color: #BFEBBF;">192.168.0.249:80</span>
+</pre>
+</div>
+
+<dl class="org-dl">
+<dt>SSH Tunnel     </dt><dd>A SSH tunnel move the communication into a secure
+channel and allow a user to get an access to a local private
+service. We can get an access to Horizon by starting a SSH tunnel
+on our local machine. This provides an access to Horizon through
+<a href="http://localhost:8080">http://localhost:8080</a>.</dd>
+</dl>
+<div class="org-src-container">
+<pre class="src src-bash">my-fancy-zsh-prompt &#955; &#8594; ssh -NL <span style="color: #BFEBBF;">8080:192.168.0.249:80</span> <span style="color: #CC9393;">\</span>
+  -l debian -i ~/.ssh/id_tp_omh &lt;public_ip_ens3&gt;
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgb423ef5" class="outline-4">
+<h4 id="orgb423ef5"><span class="section-number-4">1.2.2</span> Ping VM from the Frontend</h4>
+<div class="outline-text-4" id="text-1-2-2">
+<p>
+The neutron router called <code>router</code> makes the link between the public
+and private network. If you want to ping your VMs from the Frontend
+(<i>i.e.</i>,, <code>debian@os_control_compute</code>), then add a route that goes
+through the router.
+</p>
+
+<pre class="example">
+debian@os_control_compute$ sudo ip route add 10.0.0.0/24 via\
+  $(openstack router show router -c external_gateway_info -f value\
+    |jq -r ".external_fixed_ips[0] | .ip_address")
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org717d61c" class="outline-4">
+<h4 id="org717d61c"><span class="section-number-4">1.2.3</span> VM ping the Internet</h4>
+<div class="outline-text-4" id="text-1-2-3">
+<pre class="example">
+sudo iptables -t nat -A POSTROUTING -o ens3 -j MASQUERADE
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org344e055" class="outline-2">
+<h2 id="org344e055"><span class="section-number-2">2</span> OMH &#x2013; Online Mines Hosting</h2>
+<div class="outline-text-2" id="text-2">
+<div class="NOTE">
+<p>
+Before doing that part, first remind basics of OpenStack by redoing
+the &ldquo;Play with OpenStack&rdquo; section of the previous session (see <a href="../day1/SUBJECT.html#sec:play-with-os">Day 1 →
+Sec 3</a>). Horizon is available behind the public IP of
+<code>os_control_compute</code>.
+</p>
+
+</div>
+
+<p>
+Wordpress<sup><a id="fnr.6" class="footref" href="#fn.6">6</a></sup> is the most popular content management system
+(CMS) in use on the Web. People use it to create websites, blogs or
+applications. It is open-source, and based on PHP and MySQL under the
+hood.
+</p>
+
+<p>
+A common Wordpress deployment consists in two machines:
+</p>
+<dl class="org-dl">
+<dt><code>wordpress-db</code>  </dt><dd>A machine that contains the MySQL database for
+Wordpress.</dd>
+<dt><code>wordpress-app</code> </dt><dd>A machine that contains a web server that serves
+the Wordpress CMS.</dd>
+</dl>
+
+<p>
+The directory <code>rsc/lib</code> provides bash scripts to deploy the MySQL
+database and the web server. As the DevOps of OMH &#x2013; Online Mines
+Hosting &#x2013; your job is to automatize the deployment of a Wordpress on
+your OpenStack. See the bash scripts in <a href="#orgee7df82">appendix</a> for more information.
+Also, <a href="#org69fdaf7">clean your environment</a> before going further.
+</p>
+</div>
+
+<div id="outline-container-org69fdaf7" class="outline-3">
+<h3 id="org69fdaf7"><span class="section-number-3">2.1</span> Clean the environment</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+When it comes the time to deal with real applications, we cannot use
+cirros VMs anymore. A Cirros VM is good for testing because it starts
+fast and has a small memory footprint. However, do not expect to
+launch MySQL on a cirros.
+</p>
+
+<p>
+We are going to run several Debian9 VMs in this section. But, a
+Debian9 takes a lot more of resources to run. For this reason, you
+have to release all your resources before going further.
+</p>
+
+<p>
+First, delete currently running VMs.
+</p>
+<div class="org-src-container">
+<pre class="src src-bash">debian@os_control_compute:~$ for vm<span style="color: #F0DFAF; font-weight: bold;"> in</span> $<span style="color: #DCDCCC;">(</span>openstack server list -c Name -f value<span style="color: #DCDCCC;">)</span>; <span style="color: #F0DFAF; font-weight: bold;">do</span><span style="color: #CC9393;">\</span>
+  <span style="color: #DCDCCC; font-weight: bold;">echo</span> <span style="color: #CC9393;">"Delete ${vm}..."</span>;<span style="color: #CC9393;">\</span>
+  openstack server delete <span style="color: #CC9393;">"${vm}"</span>;<span style="color: #CC9393;">\</span>
+<span style="color: #F0DFAF; font-weight: bold;">done</span>
+</pre>
+</div>
+
+<p>
+In the same manner, delete floating IPs.
+</p>
+<div class="org-src-container">
+<pre class="src src-bash">debian@os_control_compute:~$ for ip<span style="color: #F0DFAF; font-weight: bold;"> in</span> $<span style="color: #DCDCCC;">(</span>openstack floating ip list -c <span style="color: #CC9393;">"Floating IP Address"</span> -f value<span style="color: #DCDCCC;">)</span>; <span style="color: #F0DFAF; font-weight: bold;">do</span><span style="color: #CC9393;">\</span>
+  <span style="color: #DCDCCC; font-weight: bold;">echo</span> <span style="color: #CC9393;">"Delete ${ip}..."</span>;<span style="color: #CC9393;">\</span>
+  openstack floating ip delete <span style="color: #CC9393;">"${ip}"</span>;<span style="color: #CC9393;">\</span>
+<span style="color: #F0DFAF; font-weight: bold;">done</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org652285b" class="outline-2">
+<h2 id="org652285b"><span class="section-number-2">3</span> Automatize the deployment with Heat</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+<a href="https://docs.google.com/presentation/d/14Mzr_hMvH6AB7yUqUilbrnkxpQTTVAJnKZ1W-7zIE-0/edit#slide=id.p"><i>Dim&rsquo;s slides</i></a>
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgee7df82" class="outline-2">
+<h2 id="orgee7df82"><span class="section-number-2">4</span> Appendix</h2>
+<div class="outline-text-2" id="text-4">
+</div>
+<div id="outline-container-org02ba6d0" class="outline-3">
+<h3 id="org02ba6d0"><span class="section-number-3">4.1</span> Installs MariaDB on Debian 9</h3>
+<div class="outline-text-3" id="text-4-1">
+<div class="org-src-container">
+<pre class="src src-bash"><span style="color: #5F7F5F;">#</span><span style="color: #7F9F7F;">!/usr/bin/</span><span style="color: #F0DFAF; font-weight: bold;">env</span><span style="color: #7F9F7F;"> bash</span>
+
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">Install and configure MariaDB for Debian 9.</span>
+
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">Parameters</span>
+<span style="color: #DFAF8F;">DB_ROOTPASSWORD</span>=root
+<span style="color: #DFAF8F;">DB_NAME</span>=wordpress    <span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">Wordpress DB name</span>
+<span style="color: #DFAF8F;">DB_USER</span>=silr         <span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">Wordpress DB user</span>
+<span style="color: #DFAF8F;">DB_PASSWORD</span>=silr     <span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">Wordpress DB pass</span>
+
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">Install MariaDB</span>
+apt update -q
+apt install -q -y mariadb-server mariadb-client
+
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">Next line stops mysql install from popping up request for root password</span>
+<span style="color: #DCDCCC; font-weight: bold;">export</span> <span style="color: #DFAF8F;">DEBIAN_FRONTEND</span>=noninteractive
+sed -i <span style="color: #CC9393;">'s/127.0.0.1/0.0.0.0/'</span> /etc/mysql/my.cnf
+systemctl restart mysql
+
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">Setup MySQL root password and create a user and add remote privs to app subnet</span>
+mysqladmin -u root password $<span style="color: #DCDCCC;">{</span><span style="color: #DFAF8F;">DB_ROOTPASSWORD</span><span style="color: #DCDCCC;">}</span>
+
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">Create the wordpress database</span>
+cat &lt;&lt; EOSQL | mysql -u root --password=$<span style="color: #DCDCCC;">{</span><span style="color: #DFAF8F;">DB_ROOTPASSWORD</span><span style="color: #DCDCCC;">}</span>
+<span style="color: #F0DFAF; font-weight: bold;">FLUSH PRIVILEGES;</span>
+<span style="color: #F0DFAF; font-weight: bold;">CREATE USER '${DB_USER}'@'localhost';</span>
+<span style="color: #F0DFAF; font-weight: bold;">CREATE DATABASE ${DB_NAME};</span>
+<span style="color: #F0DFAF; font-weight: bold;">SET PASSWORD FOR '${DB_USER}'@'localhost'=PASSWORD("${DB_PASSWORD}");</span>
+<span style="color: #F0DFAF; font-weight: bold;">GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO '${DB_USER}'@'localhost' IDENTIFIED BY '${DB_PASSWORD}';</span>
+<span style="color: #F0DFAF; font-weight: bold;">CREATE USER '${DB_USER}'@'%';</span>
+<span style="color: #F0DFAF; font-weight: bold;">SET PASSWORD FOR '${DB_USER}'@'%'=PASSWORD("${DB_PASSWORD}");</span>
+<span style="color: #F0DFAF; font-weight: bold;">GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO '${DB_USER}'@'%' IDENTIFIED BY '${DB_PASSWORD}';</span>
+<span style="color: #F0DFAF; font-weight: bold;">EOSQL</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org820c45e" class="outline-3">
+<h3 id="org820c45e"><span class="section-number-3">4.2</span> Installs Wordpress on Debian 9</h3>
+<div class="outline-text-3" id="text-4-2">
+<div class="org-src-container">
+<pre class="src src-bash"><span style="color: #5F7F5F;">#</span><span style="color: #7F9F7F;">!/usr/bin/</span><span style="color: #F0DFAF; font-weight: bold;">env</span><span style="color: #7F9F7F;"> bash</span>
+
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">Install and configure Apache to serve Wordpress for Debian 9.</span>
+
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">Parameters</span>
+<span style="color: #DFAF8F;">DB_NAME</span>=wordpress
+<span style="color: #DFAF8F;">DB_USER</span>=silr
+<span style="color: #DFAF8F;">DB_PASSWORD</span>=silr
+<span style="color: #DFAF8F;">DB_HOST</span>=
+
+apt-get update -y
+apt-get upgrade -y
+apt-get install -q -y --force-yes wordpress apache2 curl
+
+cat &lt;&lt; EOF &gt; /etc/apache2/sites-available/wp.conf
+<span style="color: #F0DFAF; font-weight: bold;">Alias /wp/wp-content /var/lib/wordpress/wp-content</span>
+<span style="color: #F0DFAF; font-weight: bold;">Alias /wp /usr/share/wordpress</span>
+<span style="color: #F0DFAF; font-weight: bold;">&lt;Directory /usr/share/wordpress&gt;</span>
+<span style="color: #F0DFAF; font-weight: bold;">    Options FollowSymLinks</span>
+<span style="color: #F0DFAF; font-weight: bold;">    AllowOverride Limit Options FileInfo</span>
+<span style="color: #F0DFAF; font-weight: bold;">    DirectoryIndex index.php</span>
+<span style="color: #F0DFAF; font-weight: bold;">    Require all granted</span>
+<span style="color: #F0DFAF; font-weight: bold;">&lt;/Directory&gt;</span>
+<span style="color: #F0DFAF; font-weight: bold;">&lt;Directory /var/lib/wordpress/wp-content&gt;</span>
+<span style="color: #F0DFAF; font-weight: bold;">    Options FollowSymLinks</span>
+<span style="color: #F0DFAF; font-weight: bold;">    Require all granted</span>
+<span style="color: #F0DFAF; font-weight: bold;">&lt;/Directory&gt;</span>
+<span style="color: #F0DFAF; font-weight: bold;">EOF</span>
+
+a2ensite wp
+service apache2 reload
+
+cat &lt;&lt; EOF &gt; /etc/wordpress/config-default.php
+<span style="color: #F0DFAF; font-weight: bold;">&lt;?php</span>
+<span style="color: #F0DFAF; font-weight: bold;">define('DB_NAME', '${DB_NAME}');</span>
+<span style="color: #F0DFAF; font-weight: bold;">define('DB_USER', '${DB_USER}');</span>
+<span style="color: #F0DFAF; font-weight: bold;">define('DB_PASSWORD', '${DB_PASSWORD}');</span>
+<span style="color: #F0DFAF; font-weight: bold;">define('DB_HOST', '${DB_HOST}');</span>
+<span style="color: #F0DFAF; font-weight: bold;">define('WP_CONTENT_DIR', '/var/lib/wordpress/wp-content');</span>
+<span style="color: #F0DFAF; font-weight: bold;">?&gt;</span>
+<span style="color: #F0DFAF; font-weight: bold;">EOF</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="footnotes">
+<h2 class="footnotes">Footnotes: </h2>
+<div id="text-footnotes">
+
+<div class="footdef"><sup><a id="fn.1" class="footnum" href="#fnr.1">1</a></sup> <div class="footpara"><p class="footpara">
+<a href="https://hal.inria.fr/hal-01415522v2">https://hal.inria.fr/hal-01415522v2</a>
+</p></div></div>
+
+<div class="footdef"><sup><a id="fn.2" class="footnum" href="#fnr.2">2</a></sup> <div class="footpara"><p class="footpara">
+<a href="https://github.com/BeyondTheClouds/enos">https://github.com/BeyondTheClouds/enos</a>
+</p></div></div>
+
+<div class="footdef"><sup><a id="fn.3" class="footnum" href="#fnr.3">3</a></sup> <div class="footpara"><p class="footpara">
+<a href="https://www.ovh.com/fr/cloud/">https://www.ovh.com/fr/cloud/</a>
+</p></div></div>
+
+<div class="footdef"><sup><a id="fn.4" class="footnum" href="#fnr.4">4</a></sup> <div class="footpara"><p class="footpara">
+<a href="https://docs.ovh.com/fr/public-cloud/utiliser-le-vrack-et-les-reseaux-prives-avec-les-instances-public-cloud/https://docs.ovh.com/fr/public-cloud/utiliser-le-vrack-et-les-reseaux-prives-avec-les-instances-public-cloud/">https://docs.ovh.com/fr/public-cloud/utiliser-le-vrack-et-les-reseaux-prives-avec-les-instances-public-cloud/https://docs.ovh.com/fr/public-cloud/utiliser-le-vrack-et-les-reseaux-prives-avec-les-instances-public-cloud/</a>
+</p></div></div>
+
+<div class="footdef"><sup><a id="fn.5" class="footnum" href="#fnr.5">5</a></sup> <div class="footpara"><p class="footpara">
+<a href="https://www.ovh.com/manager/cloud/index.html#/vrack">https://www.ovh.com/manager/cloud/index.html#/vrack</a>
+</p></div></div>
+
+<div class="footdef"><sup><a id="fn.6" class="footnum" href="#fnr.6">6</a></sup> <div class="footpara"><p class="footpara">
+<a href="https://wordpress.org/">https://wordpress.org/</a>
+</p></div></div>
+
+
+</div>
+</div></div>
+<div id="postamble" class="status">
+<p class="author">Author: Ronan-Alexandre Cherrueau, Dimitri Pertin, Didier Iscovery</p>
+<p class="email">Email: <a href="mailto:{firstname.lastname}@inria.fr">{firstname.lastname}@inria.fr</a></p>
+<p class="github">Find a typo, wanna make a proposition:
+ <a href="https://github.com/BeyondTheClouds/enos-scenarios/issues/new?title=tp-imt">open an issue</a></p>
+<p class="date">Last modification: 2018-02-06 Tue 14:02</p>
+<p class="license">This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.</p>
+<p class="creator"><a href="https://www.gnu.org/software/emacs/">Emacs</a> 25.3.1 (<a href="https://orgmode.org">Org</a> mode 9.1.6) – theme by
+ <a href="http://gongzhitaao.org/orgcss">http://gongzhitaao.org/orgcss</a></p>
+</div>
+</body>
+</html>

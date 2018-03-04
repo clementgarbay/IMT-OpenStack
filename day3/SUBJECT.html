@@ -1,0 +1,1077 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2018-02-09 Fri 08:11 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Operate Resources in Public and Private Clouds Thanks to OpenStack</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="Ronan-Alexandre Cherrueau, Dimitri Pertin, Didier Iscovery" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="../timeline.css" />
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2018 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Operate Resources in Public and Private Clouds Thanks to OpenStack
+<br />
+<span class="subtitle">The case of OMH &#x2013; Online Mines Hosting</span>
+</h1>
+<div class="abstract">
+<p>
+OpenStack has become the de-facto solution to operate compute, network
+and storage resources in public and private clouds. In this lab, we
+are going to:
+</p>
+<ul class="org-ul">
+<li>Deploy and configure OpenStack using
+EnOS<sup><a id="fnr.1" class="footref" href="#fn.1">1</a></sup><sup>, </sup><sup><a id="fnr.2" class="footref" href="#fn.2">2</a></sup> (Day 1).</li>
+<li>Operate this OpenStack to manage IaaS resources (e.g. boot VMs) (Day
+1/Day 2).</li>
+<li>Start your OMH &#x2013; Online Mines Hosting &#x2013; company that deploys
+Wordpress as a Service (Day 2).</li>
+<li>Automatize all the stuff with the Heat template engine (i.e., manage
+your cloud from the sofa! &#x2013; Day 2).</li>
+</ul>
+
+<p>
+Find the slides of the lecture <a href="http://enos.irisa.fr/tp-polytech/openstack-slides.pdf">there</a>.
+</p>
+
+</div>
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org3423c8a">1. Requirements and Setup</a></li>
+<li><a href="#orge98807c">2. Heat introduction</a>
+<ul>
+<li><a href="#org5982536">2.1. Boot a VM</a></li>
+<li><a href="#orgae65a93">2.2. Need more flexibility: let&rsquo;s add parameters!</a></li>
+<li><a href="#org00e523a">2.3. Need our deployment to return values: let&rsquo;s use outputs!</a></li>
+<li><a href="#orgd1bc47f">2.4. Integrate <code>cloud-init</code> in Heat</a></li>
+<li><a href="#orga90473b">2.5. Get a flexible post-installation script with <code>cloud-init</code> and parameters</a></li>
+<li><a href="#org671b46c">2.6. Nested templates</a></li>
+<li><a href="#org356a99b">2.7. Share information between nested templates</a></li>
+</ul>
+</li>
+<li><a href="#org72a3b4c">3. Exercise: Automatic deployment of WordPress with Heat</a></li>
+<li><a href="#orgd3a9eb7">4. Appendix</a>
+<ul>
+<li><a href="#org95eae8d">4.1. reservation.yaml</a></li>
+<li><a href="#org4ba97d5">4.2. patch/galera.cnf</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org3423c8a" class="outline-2">
+<h2 id="org3423c8a"><span class="section-number-2">1</span> Requirements and Setup</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+During the last session we used an OVH account to setup 2 machines,
+put them into a private network and then install OpenStack on top of
+them (see <a href="day1/SUBJECT.html#sec:ovh">Day 2 → Sec 1</a>). We got these 2 machines using the web
+interface of OVH. However, remember that the <i>Public Cloud</i>
+infrastructure of OVH is managed by OpenStack itself. To convince
+yourself, first activate the new voucher for the current session
+<code>RV47-993D</code>. Then, from your project, click on the <i>OpenStack</i> tab.
+From there, you can open OVH OpenStack Horizon.
+</p>
+
+
+<div class="figure">
+<p><img src="images/ovh-to-horizon.png" alt="ovh-to-horizon.png" />
+</p>
+<p><span class="figure-number">Figure 1: </span>Open the Horizon of your OVH Public Cloud project.</p>
+</div>
+
+<p>
+Connect yourself on OVH OpenStack Horizon, and select region <code>GRA3</code> in
+the region dropdown.
+</p>
+
+
+<div class="figure">
+<p><img src="images/horizon-region-dropdown.png" alt="horizon-region-dropdown.png" />
+</p>
+<p><span class="figure-number">Figure 2: </span>Select <code>GRA3</code> Region from Horizon.</p>
+</div>
+
+<p>
+Now you can setup the 2 machines from Horizon. But, if you can do it
+from Horizon, then can do it from OpenStack CLI! The only things you
+need is an OpenStack RC file that contains all <code>OS_*</code> environment
+variables so you can call OpenStack CLI. You can download the
+OpenStack RC file from Horizon. By clicking on your name and then
+<i>OpenStack RC File <b>v2</b></i>.
+</p>
+
+
+<div class="figure">
+<p><img src="images/horizon-os-rc-file.png" alt="horizon-os-rc-file.png" />
+</p>
+<p><span class="figure-number">Figure 3: </span>Download OpenStack RC File from Horizon.</p>
+</div>
+
+<div class="NOTE">
+<p>
+If you forgot about the OpenStack RC file, read again the &ldquo;Unleash the
+Operator in You&rdquo; section from the first session (see <a href="../day1/SUBJECT.html#sec:play-with-os">Day 1 → Sec 3</a>).
+</p>
+
+</div>
+
+<p>
+Downloads that OpenStack RC File, then put it into the lib directory
+and rename it <code>openrc.sh</code>. With the OpenStack RC file, we can
+automatize all the setup. A script that call proper OpenStack commands
+is available online at <a href="lib/setup-tp-imt-ovh.sh">lib/setup-tp-imt-ovh.sh</a>. In this script,
+we reuse the <a href="../day2/lib/os-control-compute.sh">../day2/lib/os-control-compute.sh</a> and
+<a href="../day2/lib/os-compute.sh">../day2/lib/os-compute.sh</a> script from the previous session. Here,
+we give theme to cloud init (<i>i.e.</i>, <code>--user-data</code>) to provision
+machines. Note, to execute this script you need to install
+<a href="https://pypi.python.org/pypi/virtualenv"><code>virtualenv</code></a>.
+</p>
+
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 1: </span>Script to setup OMH lab on OVH</label><pre class="src src-bash"><span style="color: #5F7F5F;">#</span><span style="color: #7F9F7F;">!/usr/bin/</span><span style="color: #F0DFAF; font-weight: bold;">env</span><span style="color: #7F9F7F;"> bash</span>
+<span style="color: #DCDCCC; font-weight: bold;">set</span> -o errexit <span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">`help set'</span>
+
+<span style="color: #DFAF8F;">SSH_KEY_SEC</span>=~/.ssh/id_tp_omh   <span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">SSH private key for the lab</span>
+<span style="color: #DFAF8F;">SSH_KEY_PUB</span>=$<span style="color: #DCDCCC;">{</span><span style="color: #DFAF8F;">SSH_KEY_SEC</span><span style="color: #DCDCCC;">}</span>.pub <span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">SSH public counter part</span>
+
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">Build a venv to install openstack-cli in a sandbox</span>
+<span style="color: #F0DFAF; font-weight: bold;">if</span> <span style="color: #DCDCCC;">[</span> <span style="color: #F0DFAF; font-weight: bold;">!</span> -d tp-imt-venv <span style="color: #DCDCCC;">]</span>
+<span style="color: #F0DFAF; font-weight: bold;">then</span>
+   virtualenv --python=python2.7 --prompt=<span style="color: #CC9393;">'(tp-imt) '</span> tp-imt-venv
+<span style="color: #F0DFAF; font-weight: bold;">fi</span>
+. tp-imt-venv/bin/activate
+
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">Install OpenStack CLI (if not already installed)</span>
+<span style="color: #F0DFAF; font-weight: bold;">if</span> <span style="color: #F0DFAF; font-weight: bold;">!</span> python -c <span style="color: #CC9393;">"import openstackclient"</span> &amp;&gt; /dev/null
+<span style="color: #F0DFAF; font-weight: bold;">then</span>
+    pip install python-openstackclient==<span style="color: #BFEBBF;">3.14.0</span>
+<span style="color: #F0DFAF; font-weight: bold;">fi</span>
+
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">Source the openrc file provided by OVH</span>
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">Get that file from:</span>
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">Cloud &gt; Serveurs &gt; tp-enos-imt &gt; OpenStack &gt; ... &gt; T&#233;l&#233;charger un</span>
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">fichier de configuration OpenStack &gt; GRA 3</span>
+. ./openrc.sh
+
+<span style="color: #DCDCCC; font-weight: bold;">set</span> -o xtrace
+
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">Import the public key of the tp into OpenStack keychain</span>
+openstack keypair show tp-omh || <span style="color: #CC9393;">\</span>
+    openstack keypair create --public-key <span style="color: #CC9393;">"${SSH_KEY_PUB}"</span> tp-omh
+
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">Setup a private network on the vRack named `provider-net'. In</span>
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">OpenStack the /provider network/ is the network setup by the admin</span>
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">to interconnect VMs. This is different to /tenant networks/ created</span>
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">by users within a tenant which are not shared among other tenants.</span>
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">In this configuration, the provider network is configured to provide</span>
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">IP on 192.168.0.0/24, started from 192.168.0.2 to 192.168.0.254. The</span>
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">`--no-dhcp' instructs netron that IP will be addressed statically.</span>
+openstack network show provider-net ||<span style="color: #CC9393;">\</span>
+    openstack network create provider-net
+
+openstack subnet show provider-net ||<span style="color: #CC9393;">\</span>
+    openstack subnet create<span style="color: #CC9393;">\</span>
+              --network provider-net<span style="color: #CC9393;">\</span>
+              --subnet-range <span style="color: #BFEBBF;">192.168.0.0/24</span><span style="color: #CC9393;">\</span>
+              --allocation-pool <span style="color: #DFAF8F;">start</span>=<span style="color: #BFEBBF;">192.168.0.2,end</span>=<span style="color: #BFEBBF;">192.168.0.254</span><span style="color: #CC9393;">\</span>
+              --no-dhcp<span style="color: #CC9393;">\</span>
+              provider-net
+
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">Create the `os-control-compute' machine. Put it in both public</span>
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">(i.e., `Ext-Net') and provider (i.e., `provider-net') networks.</span>
+openstack server show os-control-compute ||<span style="color: #CC9393;">\</span>
+    openstack server create<span style="color: #CC9393;">\</span>
+              --image <span style="color: #CC9393;">'Debian 9'</span><span style="color: #CC9393;">\</span>
+              --flavor b2-7<span style="color: #CC9393;">\</span>
+              --network Ext-Net<span style="color: #CC9393;">\</span>
+              --network provider-net<span style="color: #CC9393;">\</span>
+              --key-name tp-omh<span style="color: #CC9393;">\</span>
+              --user-data ../../day2/lib/os-control-compute.sh<span style="color: #CC9393;">\</span>
+              --wait<span style="color: #CC9393;">\</span>
+              os-control-compute
+
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">Create the `os-compute' machine. Then put it in the public network.</span>
+openstack server show os-compute ||<span style="color: #CC9393;">\</span>
+    openstack server create<span style="color: #CC9393;">\</span>
+              --image <span style="color: #CC9393;">'Debian 9'</span><span style="color: #CC9393;">\</span>
+              --flavor b2-7<span style="color: #CC9393;">\</span>
+              --network Ext-Net<span style="color: #CC9393;">\</span>
+              --network provider-net<span style="color: #CC9393;">\</span>
+              --key-name tp-omh<span style="color: #CC9393;">\</span>
+              --user-data ../../day2/lib/os-compute.sh<span style="color: #CC9393;">\</span>
+              --wait<span style="color: #CC9393;">\</span>
+              os-compute
+
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">Copy the private counterpart of the SSH key on `os-control-compute`</span>
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">so that it can be used to ease the SSH connection to the second</span>
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">machine.</span>
+<span style="color: #DFAF8F;">PUBLIC_IP_OS_CONTROL_COMPUTE</span>=$<span style="color: #DCDCCC;">(</span>python get-public-ip.py <span style="color: #CC9393;">"$(openstack server show -c addresses -f value os-control-compute)"</span><span style="color: #DCDCCC;">)</span>
+scp -i <span style="color: #CC9393;">"${SSH_KEY_SEC}"</span> <span style="color: #CC9393;">"${SSH_KEY_SEC}"</span><span style="color: #CC9393;">\</span>
+    debian@$<span style="color: #DCDCCC;">{</span><span style="color: #DFAF8F;">PUBLIC_IP_OS_CONTROL_COMPUTE</span><span style="color: #DCDCCC;">}</span>:/home/debian/.ssh/id_rsa
+
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">To connect on the os-control-compute</span>
+openstack server ssh<span style="color: #CC9393;">\</span>
+          --login debian<span style="color: #CC9393;">\</span>
+          --identity <span style="color: #CC9393;">"${SSH_KEY_SEC}"</span><span style="color: #CC9393;">\</span>
+          --address-type Ext-Net -4<span style="color: #CC9393;">\</span>
+          os-control-compute
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orge98807c" class="outline-2">
+<h2 id="orge98807c"><span class="section-number-2">2</span> Heat introduction</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+In the previous sessions, we saw how to boot a VM with OpenStack, and execute a
+post-installation script using the <code>user-data</code> mechanism. Such mechanism can
+help us to install software but it is not enough to deploy a real Cloud
+application. Cloud applications are composed of multiple services that
+collaborate to deliver the application. Each service is a charge of an aspect of
+the application. This separation of concerns brings flexibility. If a single
+service is overloaded, it is common to deploy new units of this service to
+balance the load.
+</p>
+
+<p>
+Let&rsquo;s take a simple example! WordPress<sup><a id="fnr.3" class="footref" href="#fn.3">3</a></sup> is a very popular content
+management system (CMS) written in PHP, which is mainly used as a blog system.
+It is composed of two elements: a Web server (Apache) and a database (MySQL).
+Apache serves the PHP code of WordPress and store its information in the
+database.
+</p>
+
+<p>
+Automation is a very important concept for devops. Imagine you have to deploy
+several WordPress instances in your datacenter. You don&rsquo;t want to deploy and
+manage it manually. That is why, we are going to use an OpenStack project to
+automate the deployment of applications: OpenStack Heat.
+</p>
+
+<p>
+Heat is the OpenStack orchestrator: it eats templates (called HOT for Heat
+Orchestration Template - which are files written in yaml) describing the
+OpenStack infrastructure you want to deploy (e.g. vms, network, storages) as
+well as software configurations. Then the Heat engine is in charge of sending
+the appropriate requests to OpenStack to deploy the system described in your
+template.
+</p>
+</div>
+
+<div id="outline-container-org5982536" class="outline-3">
+<h3 id="org5982536"><span class="section-number-3">2.1</span> Boot a VM</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+The simplest HOT template your can declare describes how to boot a VM:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-yaml"><span style="color: #5F7F5F;">#</span><span style="color: #7F9F7F;">heat_template_version: 2017-09-01</span>
+
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">Here we define a simple decription of the template (optional):</span>
+<span style="color: #DFAF8F;">description</span>: &gt;
+    <span style="color: #CC9393;">Simply boot a VM!</span>
+
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">Here we declare the resources to deploy:</span>
+<span style="color: #DFAF8F;">resources</span>:
+    <span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">Name of my resource:</span>
+    <span style="color: #DFAF8F;">my_vm</span>:
+        <span style="color: #DFAF8F;">type</span>: <span style="color: #CC9393;">"OS::Nova::Server"</span>
+        <span style="color: #DFAF8F;">properties</span>:
+            <span style="color: #DFAF8F;">name</span>: hello_world
+            <span style="color: #DFAF8F;">image</span>: debian-9
+            <span style="color: #DFAF8F;">flavor</span>: m1.small
+            <span style="color: #DFAF8F;">key_name</span>: admin
+</pre>
+</div>
+
+<p>
+As depicted in this example, the different OpenStack resources can be declared
+using types. Here, the type <code>OS::Nova::Server</code> can be used to declare a virtual
+machine. A type defines different properties, which should be here familiar for
+you. You can now run the stack:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">$ openstack stack create -t ./boot_vm.yml helloworld
+$ openstack stack list
+$ openstack stack show helloworld
+$ openstack server list
+$ openstack stack delete helloworld
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgae65a93" class="outline-3">
+<h3 id="orgae65a93"><span class="section-number-3">2.2</span> Need more flexibility: let&rsquo;s add parameters!</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+Templates can be more flexible with parameters. To that end you can:
+</p>
+<ul class="org-ul">
+<li>declare the parameters to provide to your template;</li>
+<li>use the intrinsic functions <code>get_param</code> to fetch them in your resource
+declarations.</li>
+</ul>
+<p>
+Here&rsquo;s an example:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-yaml"><span style="color: #DFAF8F;">heat_template_version</span>: 2017-09-01
+
+<span style="color: #DFAF8F;">description</span>: &gt;
+    <span style="color: #CC9393;">Simply boot a VM with parameters!</span>
+
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">Here we define parameters</span>
+<span style="color: #DFAF8F;">parameters</span>:
+    <span style="color: #DFAF8F;">param_flavor</span>:
+        <span style="color: #DFAF8F;">type</span>: string
+        <span style="color: #DFAF8F;">description</span>: Flavor to use for servers
+        <span style="color: #DFAF8F;">default</span>: m1.small
+    <span style="color: #DFAF8F;">param_key</span>:
+        <span style="color: #DFAF8F;">type</span>: string
+        <span style="color: #DFAF8F;">description</span>: Key name to use for servers
+        <span style="color: #DFAF8F;">default</span>: admin
+
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">Here we use intrinsic functions to get params</span>
+<span style="color: #DFAF8F;">resources</span>:
+    <span style="color: #DFAF8F;">my_vm</span>:
+        <span style="color: #DFAF8F;">type</span>: <span style="color: #CC9393;">"OS::Nova::Server"</span>
+        <span style="color: #DFAF8F;">properties</span>:
+            <span style="color: #DFAF8F;">name</span>: hello_world
+            <span style="color: #DFAF8F;">image</span>: debian-9
+            <span style="color: #DFAF8F;">flavor</span>: { <span style="color: #DFAF8F;">get_param</span>: param_flavor }
+            <span style="color: #DFAF8F;">key_name</span>: { <span style="color: #DFAF8F;">get_param</span>: param_key }
+</pre>
+</div>
+
+<p>
+Create the new stack by providing parameters :
+</p>
+<div class="org-src-container">
+<pre class="src src-bash">$ openstack stack create -t ./boot_vm_with_params.yml --parameter <span style="color: #DFAF8F;">param_flavor</span>=m1.medium helloworld
+$ openstack server list
+$ openstack stack delete helloworld
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org00e523a" class="outline-3">
+<h3 id="org00e523a"><span class="section-number-3">2.3</span> Need our deployment to return values: let&rsquo;s use outputs!</h3>
+<div class="outline-text-3" id="text-2-3">
+<p>
+Templates can declare a set of attributes to return. For instance, you might
+need to know the IP address of a resource at run-time. To that end, you can
+declare outputs:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-yaml"><span style="color: #DFAF8F;">heat_template_version</span>: 2017-09-01
+
+<span style="color: #DFAF8F;">description</span>: &gt;
+    <span style="color: #CC9393;">Simply boot a VM and outputs its IP address!</span>
+
+<span style="color: #DFAF8F;">parameters</span>:
+    <span style="color: #DFAF8F;">param_flavor</span>:
+        <span style="color: #DFAF8F;">type</span>: string
+        <span style="color: #DFAF8F;">description</span>: Flavor to use for servers
+        <span style="color: #DFAF8F;">default</span>: m1.small
+    <span style="color: #DFAF8F;">param_key</span>:
+        <span style="color: #DFAF8F;">type</span>: string
+        <span style="color: #DFAF8F;">description</span>: Key name to use for servers
+        <span style="color: #DFAF8F;">default</span>: admin
+
+<span style="color: #DFAF8F;">resources</span>:
+    <span style="color: #DFAF8F;">my_vm</span>:
+        <span style="color: #DFAF8F;">type</span>: <span style="color: #CC9393;">"OS::Nova::Server"</span>
+        <span style="color: #DFAF8F;">properties</span>:
+            <span style="color: #DFAF8F;">name</span>: hello_world
+            <span style="color: #DFAF8F;">image</span>: debian-9
+            <span style="color: #DFAF8F;">flavor</span>: { <span style="color: #DFAF8F;">get_param</span>: param_flavor }
+            <span style="color: #DFAF8F;">key_name</span>: { <span style="color: #DFAF8F;">get_param</span>: param_key }
+
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">We set here outputs (stack returned attributes)</span>
+<span style="color: #DFAF8F;">outputs</span>:
+    <span style="color: #DFAF8F;">HOSTIP</span>:
+        <span style="color: #DFAF8F;">description</span>: IP address of the created instance
+        <span style="color: #DFAF8F;">value</span>: { <span style="color: #DFAF8F;">get_attr</span>: [my_vm, first_address] }
+</pre>
+</div>
+
+<p>
+We used here another intrinsic function: <code>get_attr</code> which is used to get the IP
+address from our VM. Returned values can be displayed with the CLI or fetched
+from other templates (we will see this last case latter):
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">$ openstack stack create -t ./boot_vm_with_params.yml helloworld
+$ openstack stack output list
+$ openstack stack output show helloworld HOSTIP
+$ openstack stack delete helloworld
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgd1bc47f" class="outline-3">
+<h3 id="orgd1bc47f"><span class="section-number-3">2.4</span> Integrate <code>cloud-init</code> in Heat</h3>
+<div class="outline-text-3" id="text-2-4">
+<p>
+It is possible to declare user-data in the template:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-yaml"><span style="color: #DFAF8F;">heat_template_version</span>: 2017-09-01
+
+<span style="color: #DFAF8F;">description</span>: &gt;
+    <span style="color: #CC9393;">Simply boot a VM with a post-installation script!</span>
+
+<span style="color: #DFAF8F;">resources</span>:
+    <span style="color: #DFAF8F;">my_vm</span>:
+        <span style="color: #DFAF8F;">type</span>: <span style="color: #CC9393;">"OS::Nova::Server"</span>
+        <span style="color: #DFAF8F;">properties</span>:
+            <span style="color: #DFAF8F;">name</span>: hello_world
+            <span style="color: #DFAF8F;">image</span>: debian-9
+            <span style="color: #DFAF8F;">flavor</span>: m1.small
+            <span style="color: #DFAF8F;">key_name</span>: admin
+            <span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">We set here user-data</span>
+            <span style="color: #DFAF8F;">user_data</span>: |
+                <span style="color: #5F7F5F;">#</span><span style="color: #7F9F7F;">!/bin/bash</span>
+<span style="color: #CC9393;">                apt-get update</span>
+<span style="color: #CC9393;">                apt-get install -y lolcat</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orga90473b" class="outline-3">
+<h3 id="orga90473b"><span class="section-number-3">2.5</span> Get a flexible post-installation script with <code>cloud-init</code> and parameters</h3>
+<div class="outline-text-3" id="text-2-5">
+<p>
+With Heat, it is possible to provide a parameter to your user-data at run-time!
+</p>
+
+<div class="org-src-container">
+<pre class="src src-yaml"><span style="color: #DFAF8F;">heat_template_version</span>: 2017-09-01
+
+<span style="color: #DFAF8F;">description</span>: &gt;
+    <span style="color: #CC9393;">Simply boot a VM and set a post-installation script with params</span>
+
+<span style="color: #DFAF8F;">parameters</span>:
+    <span style="color: #DFAF8F;">PackageName</span>:
+        <span style="color: #DFAF8F;">label</span>: Name of the package to install
+        <span style="color: #DFAF8F;">type</span>: string
+
+<span style="color: #DFAF8F;">resources</span>:
+    <span style="color: #DFAF8F;">my_vm</span>:
+        <span style="color: #DFAF8F;">type</span>: <span style="color: #CC9393;">"OS::Nova::Server"</span>
+        <span style="color: #DFAF8F;">properties</span>:
+            <span style="color: #DFAF8F;">name</span>: hello_world
+            <span style="color: #DFAF8F;">image</span>: debian-9
+            <span style="color: #DFAF8F;">flavor</span>: m1.small
+            <span style="color: #DFAF8F;">key_name</span>: admin
+            <span style="color: #DFAF8F;">user_data</span>: |
+                <span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">This intrinsic function can replace strings in user-data:</span>
+                <span style="color: #DFAF8F;">str_replace</span>:
+                    <span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">We define here the parameters for our script</span>
+                    <span style="color: #DFAF8F;">params</span>:
+                        <span style="color: #DFAF8F;">${PACKAGE_NAME}</span>: { <span style="color: #DFAF8F;">get_param</span>: PackageName}
+                    <span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">We define here the script</span>
+                    <span style="color: #DFAF8F;">template</span>: |
+                        <span style="color: #5F7F5F;">#</span><span style="color: #7F9F7F;">!/bin/bash</span>
+<span style="color: #CC9393;">                        apt-get update</span>
+<span style="color: #CC9393;">                        apt-get install -y ${PACKAGE_NAME}</span>
+</pre>
+</div>
+
+<p>
+We used here the new intrinsic function <code>str_replace</code> to replace strings in our
+user-data.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org671b46c" class="outline-3">
+<h3 id="org671b46c"><span class="section-number-3">2.6</span> Nested templates</h3>
+<div class="outline-text-3" id="text-2-6">
+<p>
+It is possible to compose one logical stack with multiple templates. To that end
+we use nested templates. Here is <code>boot_vm_with_params.yml</code> file describing how
+to boot a VM with parameters:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-yaml"><span style="color: #DFAF8F;">heat_template_version</span>: 2017-09-01
+
+<span style="color: #DFAF8F;">description</span>: &gt;
+    <span style="color: #CC9393;">Simply boot a VM with parameters!</span>
+
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">Here we define parameters</span>
+<span style="color: #DFAF8F;">parameters</span>:
+    <span style="color: #DFAF8F;">param_name</span>:
+        <span style="color: #DFAF8F;">type</span>: string
+        <span style="color: #DFAF8F;">description</span>: Host name
+    <span style="color: #DFAF8F;">param_flavor</span>:
+        <span style="color: #DFAF8F;">type</span>: string
+        <span style="color: #DFAF8F;">description</span>: Host flavor
+
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">Here we use intrinsic functions to get params</span>
+<span style="color: #DFAF8F;">resources</span>:
+    <span style="color: #DFAF8F;">my_vm</span>:
+        <span style="color: #DFAF8F;">type</span>: <span style="color: #CC9393;">"OS::Nova::Server"</span>
+        <span style="color: #DFAF8F;">properties</span>:
+            <span style="color: #DFAF8F;">image</span>: debian-9
+            <span style="color: #DFAF8F;">key_name</span>: admin
+            <span style="color: #DFAF8F;">name</span>: { <span style="color: #DFAF8F;">get_param</span>: param_name }
+            <span style="color: #DFAF8F;">flavor</span>: { <span style="color: #DFAF8F;">get_param</span>: param_flavor }
+</pre>
+</div>
+
+<p>
+Here&rsquo;s the <code>boot_vms.yml</code> file which use the previous one to declare multiple
+VMs:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-yaml"><span style="color: #DFAF8F;">heat_template_version</span>: 2017-09-01
+
+<span style="color: #DFAF8F;">description</span>: &gt;
+    <span style="color: #CC9393;">Declare two VM resources based on a nested template!</span>
+
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">Here we use intrinsic functions to get params</span>
+<span style="color: #DFAF8F;">resources</span>:
+    <span style="color: #DFAF8F;">webserver</span>:
+        <span style="color: #DFAF8F;">type</span>: boot_vm_with_params.yml
+        <span style="color: #DFAF8F;">properties</span>:
+            <span style="color: #DFAF8F;">param_name</span>: webserver
+            <span style="color: #DFAF8F;">param_flavor</span>: m1.tiny
+    <span style="color: #DFAF8F;">database</span>:
+        <span style="color: #DFAF8F;">type</span>: boot_vm_with_params.yml
+        <span style="color: #DFAF8F;">properties</span>:
+            <span style="color: #DFAF8F;">param_name</span>: database
+            <span style="color: #DFAF8F;">param_flavor</span>: m1.medium
+</pre>
+</div>
+
+<p>
+You can then start multiple VMs with:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">$ openstack stack create -t ./boot_vms.yml helloworld
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org356a99b" class="outline-3">
+<h3 id="org356a99b"><span class="section-number-3">2.7</span> Share information between nested templates</h3>
+<div class="outline-text-3" id="text-2-7">
+<p>
+Let&rsquo;s declare now a template whose VM needs to determine the IP address of
+another VM at run time. Here&rsquo;s the content of <code>./boot_vm_need_ip.yml</code>:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-yaml"><span style="color: #DFAF8F;">heat_template_version</span>: 2017-09-01
+
+<span style="color: #DFAF8F;">description</span>: &gt;
+    <span style="color: #CC9393;">Simply boot a VM but requires the remote host IP address!</span>
+
+<span style="color: #DFAF8F;">parameters</span>:
+    <span style="color: #DFAF8F;">IPAddress</span>:
+        <span style="color: #DFAF8F;">label</span>: IPAddress of the remote host
+        <span style="color: #DFAF8F;">type</span>: string
+
+<span style="color: #DFAF8F;">resources</span>:
+    <span style="color: #DFAF8F;">my_vm</span>:
+        <span style="color: #DFAF8F;">type</span>: <span style="color: #CC9393;">"OS::Nova::Server"</span>
+        <span style="color: #DFAF8F;">properties</span>:
+            <span style="color: #DFAF8F;">name</span>: hello_world
+            <span style="color: #DFAF8F;">image</span>: debian-9
+            <span style="color: #DFAF8F;">flavor</span>: m1.small
+            <span style="color: #DFAF8F;">key_name</span>: admin
+            <span style="color: #DFAF8F;">user_data</span>: |
+                <span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">This intrinsic function can replace strings in user-data:</span>
+                <span style="color: #DFAF8F;">str_replace</span>:
+                    <span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">We define here the parameters for our script</span>
+                    <span style="color: #DFAF8F;">params</span>:
+                        <span style="color: #DFAF8F;">${IP_ADDRESS}</span>: { <span style="color: #DFAF8F;">get_param</span>: IPAdress}
+                    <span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">We define here the script</span>
+                    <span style="color: #DFAF8F;">template</span>: |
+                        <span style="color: #5F7F5F;">#</span><span style="color: #7F9F7F;">!/bin/bash</span>
+                        echo <span style="color: #CC9393;">"${IP_ADDRESS} remote_host"</span> &gt; /etc/hosts
+</pre>
+</div>
+
+<p>
+The attribute of the IP address can be fetched with the <code>get_attr</code> intrinsic function:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-yaml"><span style="color: #DFAF8F;">heat_template_version</span>: 2017-09-01
+
+<span style="color: #DFAF8F;">description</span>: &gt;
+    <span style="color: #CC9393;">Declare two VM resources based on a nested template!</span>
+
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">Here we use intrinsic functions to get params</span>
+<span style="color: #DFAF8F;">resources</span>:
+    <span style="color: #DFAF8F;">webserver</span>:
+        <span style="color: #DFAF8F;">type</span>: ./boot_vm_need_ip.yml
+        <span style="color: #DFAF8F;">properties</span>:
+            <span style="color: #DFAF8F;">IPAdress</span>: { <span style="color: #DFAF8F;">get_attr</span>: [database, HOSTIP] }
+    <span style="color: #DFAF8F;">database</span>:
+        <span style="color: #DFAF8F;">type</span>: ./boot_vm_with_params.yml
+        <span style="color: #DFAF8F;">properties</span>:
+            <span style="color: #DFAF8F;">param_name</span>: database
+            <span style="color: #DFAF8F;">param_flavor</span>: m1.medium
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org72a3b4c" class="outline-2">
+<h2 id="org72a3b4c"><span class="section-number-2">3</span> Exercise: Automatic deployment of WordPress with Heat</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+You now have to use what you learned from the previous section to deploy a
+WordPress application using Heat. We are going to deploy WordPress inside two
+VMs: the first one holding the web server, the second one running the database:
+</p>
+
+<ul class="org-ul">
+<li>VM1: Apache + PHP + WordPress code</li>
+<li>VM2: MySQL</li>
+</ul>
+
+<p>
+To that end you must create three HOT files:
+</p>
+
+<ul class="org-ul">
+<li>mysql.yml: containing the description of the VM running MySQL;</li>
+<li>web<sub>server.yml</sub>: containing the description of the VM running the Web server;</li>
+<li>wp<sub>app.yml</sub>: containing the description of the WordPress application
+(<code>mysql.yml</code> + <code>web_server.yml</code> as nested templates).</li>
+</ul>
+
+<p>
+To help you, we provide the post-installation script needed for both services.
+You should read them to understand what they do. The first one is for the
+database:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash"><span style="color: #5F7F5F;">#</span><span style="color: #7F9F7F;">!/usr/bin/</span><span style="color: #F0DFAF; font-weight: bold;">env</span><span style="color: #7F9F7F;"> bash</span>
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">Install and configure MariaDB for Debian 9.</span>
+
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">Install MariaDB</span>
+apt update -q
+apt install -q -y mariadb-server mariadb-client
+
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">Next line stops mysql install from popping up request for root password</span>
+<span style="color: #DCDCCC; font-weight: bold;">export</span> <span style="color: #DFAF8F;">DEBIAN_FRONTEND</span>=noninteractive
+sed -i <span style="color: #CC9393;">'s/127.0.0.1/0.0.0.0/'</span> /etc/mysql/mariadb.conf.d/50-server.cnf
+systemctl restart mysql
+
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">Setup MySQL root password and create a user and add remote privs to app subnet</span>
+mysqladmin -u root password $<span style="color: #DCDCCC;">{</span><span style="color: #DFAF8F;">DB_ROOTPASSWORD</span><span style="color: #DCDCCC;">}</span>
+
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">Create the wordpress database</span>
+cat &lt;&lt; EOSQL | mysql -u root --password=$<span style="color: #DCDCCC;">{</span><span style="color: #DFAF8F;">DB_ROOTPASSWORD</span><span style="color: #DCDCCC;">}</span>
+<span style="color: #F0DFAF; font-weight: bold;">FLUSH PRIVILEGES;</span>
+<span style="color: #F0DFAF; font-weight: bold;">CREATE USER '${DB_USER}'@'localhost';</span>
+<span style="color: #F0DFAF; font-weight: bold;">CREATE DATABASE ${DB_NAME};</span>
+<span style="color: #F0DFAF; font-weight: bold;">SET PASSWORD FOR '${DB_USER}'@'localhost'=PASSWORD("${DB_PASSWORD}");</span>
+<span style="color: #F0DFAF; font-weight: bold;">GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO '${DB_USER}'@'localhost' IDENTIFIED BY '${DB_PASSWORD}';</span>
+<span style="color: #F0DFAF; font-weight: bold;">CREATE USER '${DB_USER}'@'%';</span>
+<span style="color: #F0DFAF; font-weight: bold;">SET PASSWORD FOR '${DB_USER}'@'%'=PASSWORD("${DB_PASSWORD}");</span>
+<span style="color: #F0DFAF; font-weight: bold;">GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO '${DB_USER}'@'%' IDENTIFIED BY '${DB_PASSWORD}';</span>
+<span style="color: #F0DFAF; font-weight: bold;">EOSQL</span>
+</pre>
+</div>
+
+<p>
+Here&rsquo;s the one for the web server:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash"><span style="color: #5F7F5F;">#</span><span style="color: #7F9F7F;">!/usr/bin/</span><span style="color: #F0DFAF; font-weight: bold;">env</span><span style="color: #7F9F7F;"> bash</span>
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">Install and configure Apache to serve Wordpress for Debian 9.</span>
+
+apt-get update -y
+apt-get upgrade -y
+apt-get install -q -y --force-yes wordpress apache2 curl
+
+cat &lt;&lt; EOF &gt; /etc/apache2/sites-available/wp.conf
+<span style="color: #F0DFAF; font-weight: bold;">Alias /wp/wp-content /var/lib/wordpress/wp-content</span>
+<span style="color: #F0DFAF; font-weight: bold;">Alias /wp /usr/share/wordpress</span>
+<span style="color: #F0DFAF; font-weight: bold;">&lt;Directory /usr/share/wordpress&gt;</span>
+<span style="color: #F0DFAF; font-weight: bold;">    Options FollowSymLinks</span>
+<span style="color: #F0DFAF; font-weight: bold;">    AllowOverride Limit Options FileInfo</span>
+<span style="color: #F0DFAF; font-weight: bold;">    DirectoryIndex index.php</span>
+<span style="color: #F0DFAF; font-weight: bold;">    Require all granted</span>
+<span style="color: #F0DFAF; font-weight: bold;">&lt;/Directory&gt;</span>
+<span style="color: #F0DFAF; font-weight: bold;">&lt;Directory /var/lib/wordpress/wp-content&gt;</span>
+<span style="color: #F0DFAF; font-weight: bold;">    Options FollowSymLinks</span>
+<span style="color: #F0DFAF; font-weight: bold;">    Require all granted</span>
+<span style="color: #F0DFAF; font-weight: bold;">&lt;/Directory&gt;</span>
+<span style="color: #F0DFAF; font-weight: bold;">EOF</span>
+
+a2ensite wp
+service apache2 reload
+
+cat &lt;&lt; EOF &gt; /etc/wordpress/config-default.php
+<span style="color: #F0DFAF; font-weight: bold;">&lt;?php</span>
+<span style="color: #F0DFAF; font-weight: bold;">define('DB_NAME', '${DB_NAME}');</span>
+<span style="color: #F0DFAF; font-weight: bold;">define('DB_USER', '${DB_USER}');</span>
+<span style="color: #F0DFAF; font-weight: bold;">define('DB_PASSWORD', '${DB_PASSWORD}');</span>
+<span style="color: #F0DFAF; font-weight: bold;">define('DB_HOST', '${DB_HOST}');</span>
+<span style="color: #F0DFAF; font-weight: bold;">define('WP_CONTENT_DIR', '/var/lib/wordpress/wp-content');</span>
+<span style="color: #F0DFAF; font-weight: bold;">?&gt;</span>
+<span style="color: #F0DFAF; font-weight: bold;">EOF</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgd3a9eb7" class="outline-2">
+<h2 id="orgd3a9eb7"><span class="section-number-2">4</span> Appendix</h2>
+<div class="outline-text-2" id="text-4">
+</div>
+<div id="outline-container-org95eae8d" class="outline-3">
+<h3 id="org95eae8d"><span class="section-number-3">4.1</span> reservation.yaml</h3>
+<div class="outline-text-3" id="text-4-1">
+<div class="org-src-container">
+<pre class="src src-bash">---
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">############################################### #</span>
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">Static provider parameter                       #</span>
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">############################################### #</span>
+provider: ovh
+
+resources:
+  os-control-compute: <span style="color: #BFEBBF;">192.168.0.2</span>
+  os-compute: <span style="color: #BFEBBF;">192.168.0.3</span>
+
+
+
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">############################################### #</span>
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">Inventory to use                                #</span>
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">############################################### #</span>
+
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">This will describe the topology of your services</span>
+inventory: inventories/inventory.sample
+
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">############################################### #</span>
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">docker registry parameters</span>
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">############################################### #</span>
+registry:
+  <span style="color: #DCDCCC; font-weight: bold;">type</span>: none
+
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">############################################### #</span>
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">Enos Customizations                             #</span>
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">############################################### #</span>
+enable_monitoring: no
+
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">############################################### #</span>
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">Kolla parameters                                #</span>
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">############################################### #</span>
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">Repository</span>
+kolla_repo: <span style="color: #CC9393;">"https://git.openstack.org/openstack/kolla-ansible"</span>
+kolla_ref: <span style="color: #CC9393;">"stable/pike"</span>
+
+<span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">Vars : globals.yml</span>
+kolla:
+  kolla_base_distro: <span style="color: #CC9393;">"centos"</span>
+  kolla_install_type: <span style="color: #CC9393;">"source"</span>
+  docker_namespace: <span style="color: #CC9393;">"beyondtheclouds"</span>
+  enable_openvswitch: <span style="color: #CC9393;">"no"</span>
+  neutron_plugin_agent: <span style="color: #CC9393;">"linuxbridge"</span>
+
+  enable_heat: <span style="color: #CC9393;">"yes"</span>
+  <span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">enable_trove: "yes"</span>
+  <span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">enable_octavia: "yes"</span>
+  <span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">enable_senlin: "yes"</span>
+  <span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">enable_zun: "yes"</span>
+  <span style="color: #5F7F5F;"># </span><span style="color: #7F9F7F;">enable_designate: "yes"</span>
+
+  node_custom_config: <span style="color: #CC9393;">"{{ cwd }}/patch"</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org4ba97d5" class="outline-3">
+<h3 id="org4ba97d5"><span class="section-number-3">4.2</span> patch/galera.cnf</h3>
+<div class="outline-text-3" id="text-4-2">
+<div class="org-src-container">
+<pre class="src src-bash"><span style="color: #DCDCCC;">[</span>mysqld<span style="color: #DCDCCC;">]</span>
+<span style="color: #DFAF8F;">innodb_buffer_pool_size</span> = <span style="color: #BFEBBF;">512M</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="footnotes">
+<h2 class="footnotes">Footnotes: </h2>
+<div id="text-footnotes">
+
+<div class="footdef"><sup><a id="fn.1" class="footnum" href="#fnr.1">1</a></sup> <div class="footpara"><p class="footpara">
+<a href="https://hal.inria.fr/hal-01415522v2">https://hal.inria.fr/hal-01415522v2</a>
+</p></div></div>
+
+<div class="footdef"><sup><a id="fn.2" class="footnum" href="#fnr.2">2</a></sup> <div class="footpara"><p class="footpara">
+<a href="https://github.com/BeyondTheClouds/enos">https://github.com/BeyondTheClouds/enos</a>
+</p></div></div>
+
+<div class="footdef"><sup><a id="fn.3" class="footnum" href="#fnr.3">3</a></sup> <div class="footpara"><p class="footpara">
+<a href="https://wordpress.org/">https://wordpress.org/</a>
+</p></div></div>
+
+
+</div>
+</div></div>
+<div id="postamble" class="status">
+<p class="author">Author: Ronan-Alexandre Cherrueau, Dimitri Pertin, Didier Iscovery</p>
+<p class="email">Email: <a href="mailto:{firstname.lastname}@inria.fr">{firstname.lastname}@inria.fr</a></p>
+<p class="github">Find a typo, wanna make a proposition:
+ <a href="https://github.com/BeyondTheClouds/enos-scenarios/issues/new?title=tp-imt (Day 3)">open an issue</a></p>
+<p class="date">Last modification: 2018-02-09 Fri 08:10</p>
+<p class="license">This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.</p>
+<p class="creator"><a href="https://www.gnu.org/software/emacs/">Emacs</a> 25.3.1 (<a href="https://orgmode.org">Org</a> mode 9.1.6) – theme by
+ <a href="http://gongzhitaao.org/orgcss">http://gongzhitaao.org/orgcss</a></p>
+</div>
+</body>
+</html>
